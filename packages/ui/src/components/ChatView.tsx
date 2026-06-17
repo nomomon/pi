@@ -2,13 +2,11 @@ import { For, Show, createEffect, createMemo, createSignal, Switch, Match } from
 import { state } from '../store'
 import type { ChatEntry } from '../types'
 import AssistantMessage from './AssistantMessage'
-import ToolExecution from './ToolExecution'
-import ToolCallGroup from './ToolCallGroup'
-import BashExecution from './BashExecution'
+import StepGroup from './ToolCallGroup'
 
 type GroupedEntry =
-  | { kind: 'single'; entry: ChatEntry }
-  | { kind: 'toolGroup'; entries: ChatEntry[]; key: string }
+  | { kind: 'message'; entry: ChatEntry; hideThinking: boolean }
+  | { kind: 'step'; entries: ChatEntry[]; key: string }
 
 export default function ChatView() {
   let containerRef: HTMLDivElement | undefined
@@ -26,24 +24,36 @@ export default function ChatView() {
 
   const grouped = createMemo((): GroupedEntry[] => {
     const result: GroupedEntry[] = []
-    let group: ChatEntry[] = []
+    let step: ChatEntry[] = []
 
-    for (const entry of state.messages) {
-      if (entry.type === 'tool_execution') {
-        group.push(entry)
-      } else {
-        if (group.length > 0) {
-          result.push({ kind: 'toolGroup', entries: group, key: `group:${group[0].id}` })
-          group = []
-        }
-        result.push({ kind: 'single', entry })
+    const flushStep = () => {
+      if (step.length > 0) {
+        result.push({ kind: 'step', entries: step, key: `step:${step[0].id}` })
+        step = []
       }
     }
 
-    if (group.length > 0) {
-      result.push({ kind: 'toolGroup', entries: group, key: `group:${group[0].id}` })
+    for (const entry of state.messages) {
+      if (entry.type === 'user') {
+        flushStep()
+        result.push({ kind: 'message', entry, hideThinking: false })
+      } else if (entry.type === 'assistant') {
+        const hasThinking = (entry.thinkingBlocks?.length ?? 0) > 0
+        const hasText = (entry.textBlocks?.length ?? 0) > 0
+
+        if (hasThinking) step.push(entry)
+
+        if (hasText) {
+          flushStep()
+          result.push({ kind: 'message', entry, hideThinking: hasThinking })
+        }
+      } else {
+        // tool_execution, bash, compaction, system
+        step.push(entry)
+      }
     }
 
+    flushStep()
     return result
   })
 
@@ -52,16 +62,24 @@ export default function ChatView() {
       <For each={grouped()}>
         {(item) => (
           <Show
-            when={item.kind === 'toolGroup'}
-            fallback={<ChatEntryRenderer entry={(item as { kind: 'single'; entry: ChatEntry }).entry} onToggleTool={toggle} toolExpanded={expanded()} />}
+            when={item.kind === 'step'}
+            fallback={() => {
+              const m = item as { kind: 'message'; entry: ChatEntry; hideThinking: boolean }
+              return <MessageRenderer entry={m.entry} hideThinking={m.hideThinking} />
+            }}
           >
-            <ToolCallGroup
-              entries={(item as { kind: 'toolGroup'; entries: ChatEntry[]; key: string }).entries}
-              expanded={expanded()[(item as { kind: 'toolGroup'; entries: ChatEntry[]; key: string }).key] ?? false}
-              onToggle={() => toggle((item as { kind: 'toolGroup'; entries: ChatEntry[]; key: string }).key)}
-              toolExpanded={expanded()}
-              onToggleTool={toggle}
-            />
+            {() => {
+              const g = item as { kind: 'step'; entries: ChatEntry[]; key: string }
+              return (
+                <StepGroup
+                  entries={g.entries}
+                  expanded={expanded()[g.key] ?? false}
+                  onToggle={() => toggle(g.key)}
+                  itemExpanded={expanded()}
+                  onToggleItem={toggle}
+                />
+              )
+            }}
           </Show>
         )}
       </For>
@@ -75,9 +93,8 @@ export default function ChatView() {
   )
 }
 
-function ChatEntryRenderer(props: { entry: ChatEntry; toolExpanded: Record<string, boolean>; onToggleTool: (id: string) => void }) {
+function MessageRenderer(props: { entry: ChatEntry; hideThinking: boolean }) {
   const e = () => props.entry
-
   return (
     <Switch>
       <Match when={e().type === 'user'}>
@@ -89,29 +106,7 @@ function ChatEntryRenderer(props: { entry: ChatEntry; toolExpanded: Record<strin
       <Match when={e().type === 'assistant'}>
         <div class="chat-entry assistant-entry">
           <span class="role-label">pi</span>
-          <AssistantMessage entry={e()} />
-        </div>
-      </Match>
-      <Match when={e().type === 'tool_execution'}>
-        <ToolExecution
-          entry={e()}
-          expanded={props.toolExpanded[e().id] ?? false}
-          onToggle={() => props.onToggleTool(e().id)}
-        />
-      </Match>
-      <Match when={e().type === 'bash'}>
-        <div class="chat-entry bash-entry">
-          <BashExecution entry={e()} />
-        </div>
-      </Match>
-      <Match when={e().type === 'compaction'}>
-        <div class="chat-entry compaction-entry">
-          <span class="compaction-icon">&#x27F3;</span> {e().message}
-        </div>
-      </Match>
-      <Match when={e().type === 'system'}>
-        <div class={`chat-entry system-entry ${e().message?.startsWith('Error') ? 'error' : ''}`}>
-          {e().message}
+          <AssistantMessage entry={e()} hideThinking={props.hideThinking} />
         </div>
       </Match>
     </Switch>

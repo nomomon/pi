@@ -5,14 +5,17 @@ import type { ChatEntry, ThinkingContent } from '../types'
 
 interface Props {
   entry: ChatEntry
+  hideThinking?: boolean
 }
 
 export default function AssistantMessage(props: Props) {
   return (
     <div class="assistant-message">
-      <For each={props.entry.thinkingBlocks ?? []}>
-        {(block) => <ThinkingBlock block={block} isStreaming={props.entry.isPartial ?? false} />}
-      </For>
+      <Show when={!props.hideThinking}>
+        <For each={props.entry.thinkingBlocks ?? []}>
+          {(block) => <ThinkingBlock block={block} isStreaming={props.entry.isPartial ?? false} />}
+        </For>
+      </Show>
       <For each={props.entry.textBlocks ?? []}>
         {(block) => <TextBlock text={block.text} />}
       </For>
