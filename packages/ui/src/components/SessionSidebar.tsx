@@ -1,5 +1,4 @@
 import { createSignal, createEffect, For, Show, onMount, onCleanup } from 'solid-js'
-import { Portal } from 'solid-js/web'
 import { state, showNotification } from '../store'
 import { sendCommand, reloadSession, openInWorkspace } from '../ws'
 
@@ -199,21 +198,19 @@ export default function SessionSidebar() {
         </Show>
       </div>
       <Show when={menuState() !== null}>
-        <Portal>
-          <div
-            class="sidebar-dropdown"
-            style={{
-              position: 'fixed',
-              top: `${menuState()!.top}px`,
-              left: `${menuState()!.left}px`,
-              'z-index': '9999',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button class="sidebar-dropdown-item" onClick={() => { startRename(menuState()!.session); setMenuState(null) }}>Rename</button>
-            <button class="sidebar-dropdown-item danger" onClick={() => { deleteSession(menuState()!.sessionPath); setMenuState(null) }}>Delete</button>
-          </div>
-        </Portal>
+        <div
+          class="sidebar-dropdown"
+          style={{
+            position: 'fixed',
+            top: `${menuState()!.top}px`,
+            left: `${menuState()!.left}px`,
+            'z-index': '9999',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button class="sidebar-dropdown-item" onClick={() => { startRename(menuState()!.session); setMenuState(null) }}>Rename</button>
+          <button class="sidebar-dropdown-item danger" onClick={() => { deleteSession(menuState()!.sessionPath); setMenuState(null) }}>Delete</button>
+        </div>
       </Show>
     </aside>
   )
