@@ -1,6 +1,6 @@
 import { createSignal, onMount, For, Show } from 'solid-js'
-import { state, setState, showNotification } from '../store'
-import { sendCommand } from '../ws'
+import { state, showNotification } from '../store'
+import { sendCommand, reloadSession } from '../ws'
 
 interface Props {
   onClose: () => void
@@ -47,25 +47,25 @@ export default function SessionSelector(props: Props) {
   }
 
   async function switchSession(sessionPath: string) {
+    props.onClose()
     try {
       await sendCommand({ type: 'switch_session', sessionPath })
-      setState('messages', [])
+      await reloadSession()
       showNotification('Session switched', 'info')
     } catch {
       showNotification('Failed to switch session', 'error')
     }
-    props.onClose()
   }
 
   async function newSession() {
+    props.onClose()
     try {
       await sendCommand({ type: 'new_session' })
-      setState('messages', [])
+      await reloadSession()
       showNotification('New session started', 'info')
     } catch {
       showNotification('Failed to start new session', 'error')
     }
-    props.onClose()
   }
 
   function formatDate(iso: string) {

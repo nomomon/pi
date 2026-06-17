@@ -1,6 +1,6 @@
 import { createSignal, createMemo, For, Show } from 'solid-js'
 import { state, setState, pushHistory, showNotification } from '../store'
-import { send, sendCommand, sendBash } from '../ws'
+import { send, sendCommand, sendBash, reloadSession } from '../ws'
 import type { RpcSlashCommand } from '../types'
 
 const BUILTIN_COMMANDS: RpcSlashCommand[] = [
@@ -64,8 +64,8 @@ export default function InputArea() {
     if (text.startsWith('/session')) { setState('view', 'sessions'); return }
     if (text === '/new') {
       await sendCommand({ type: 'new_session' })
+      await reloadSession()
       showNotification('New session started', 'info')
-      setState('messages', [])
       return
     }
     if (text.startsWith('/compact')) {

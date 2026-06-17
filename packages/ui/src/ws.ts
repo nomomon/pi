@@ -79,6 +79,20 @@ export function send(command: RpcCommand) {
   ws.send(JSON.stringify(command))
 }
 
+export async function reloadSession() {
+  setState('messages', [])
+  const [stateData, msgData] = await Promise.all([
+    sendCommand({ type: 'get_state' }),
+    sendCommand({ type: 'get_messages' }),
+  ])
+  if (stateData) applySessionState(stateData)
+  if (msgData?.messages) {
+    for (const msg of msgData.messages) {
+      processHistoricalMessage(msg)
+    }
+  }
+}
+
 export function sendBash(command: string, excludeFromContext = false) {
   const entryId = `bash_${Date.now()}`
   addMessage({
