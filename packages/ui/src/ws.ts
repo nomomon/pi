@@ -5,6 +5,8 @@ import type { RpcCommand, AgentEvent, RpcResponse, ChatEntry } from './types'
 let ws: WebSocket | null = null
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null
 let idCounter = 0
+let cwdOverride: string | null = null
+let pendingSessionPath: string | null = null
 
 function genId() {
   return `cmd_${++idCounter}`
@@ -16,7 +18,7 @@ export function connect() {
   setState('connecting', true)
 
   const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-  const cwd = new URLSearchParams(window.location.search).get('cwd') ?? ''
+  const cwd = cwdOverride ?? new URLSearchParams(window.location.search).get('cwd') ?? ''
   const url = `${proto}//${window.location.host}/ws${cwd ? `?cwd=${encodeURIComponent(cwd)}` : ''}`
 
   ws = new WebSocket(url)
@@ -41,6 +43,12 @@ export function connect() {
         setState('slashCommands', data.commands)
       }
     }).catch(() => {})
+    // Handle pending session switch (e.g. opening a session from a different workspace)
+    if (pendingSessionPath) {
+      const path = pendingSessionPath
+      pendingSessionPath = null
+      sendCommand({ type: 'switch_session', sessionPath: path }).then(() => reloadSession())
+    }
   }
 
   ws.onmessage = (event) => {
@@ -360,6 +368,21 @@ function handleAgentEvent(event: AgentEvent) {
       })
       break
   }
+}
+
+export function openInWorkspace(sessionPath: string, cwd: string) {
+  cwdOverride = cwd
+  pendingSessionPath = sessionPath
+  if (ws) {
+    const old = ws
+    ws = null
+    if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null }
+    old.onclose = null
+    old.onerror = null
+    old.close()
+  }
+  setState({ connected: false, connecting: false })
+  connect()
 }
 
 function processHistoricalMessage(msg: any) {

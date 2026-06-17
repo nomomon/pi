@@ -75,6 +75,7 @@ export type RpcCommand =
   | { id?: string; type: 'export_html'; outputPath?: string }
   | { id?: string; type: 'list_sessions'; cwd?: string }
   | { id?: string; type: 'delete_session'; sessionPath: string }
+  | { id?: string; type: 'rename_session'; sessionPath: string; name: string }
 
 export type RpcResponse =
   | { id?: string; type: 'response'; command: string; success: true; data?: any }
