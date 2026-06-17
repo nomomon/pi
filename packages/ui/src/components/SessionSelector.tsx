@@ -1,0 +1,82 @@
+import { createSignal, createEffect, For, Show } from 'solid-js'
+import { state, setState, showNotification } from '../store'
+import { sendCommand } from '../ws'
+
+interface Props {
+  onClose: () => void
+}
+
+export default function SessionSelector(props: Props) {
+  const [sessions, setSessions] = createSignal<any[]>([])
+  const [loading, setLoading] = createSignal(true)
+
+  createEffect(async () => {
+    try {
+      const result = await sendCommand({ type: 'get_commands' })
+      // get_commands might return available commands; try get_state for session info
+      // Attempt to get sessions from the agent
+      setSessions(result?.sessions ?? [])
+    } catch {
+      setSessions([])
+    } finally {
+      setLoading(false)
+    }
+  })
+
+  async function switchSession(sessionPath: string) {
+    try {
+      await sendCommand({ type: 'switch_session', sessionPath })
+      setState('messages', [])
+      showNotification('Session switched', 'info')
+    } catch {
+      showNotification('Failed to switch session', 'error')
+    }
+    props.onClose()
+  }
+
+  async function newSession() {
+    try {
+      await sendCommand({ type: 'new_session' })
+      setState('messages', [])
+      showNotification('New session started', 'info')
+    } catch {
+      showNotification('Failed to start new session', 'error')
+    }
+    props.onClose()
+  }
+
+  return (
+    <div class="overlay" onClick={props.onClose}>
+      <div class="overlay-panel" onClick={(e) => e.stopPropagation()}>
+        <div class="overlay-header">
+          <span>Sessions</span>
+          <button class="overlay-close" onClick={props.onClose}>&#x2715;</button>
+        </div>
+        <div class="overlay-list">
+          <button class="session-item new-session-btn" onClick={newSession}>
+            + New Session
+          </button>
+          <Show when={loading()}>
+            <div class="overlay-loading">Loading sessions...</div>
+          </Show>
+          <Show when={!loading() && sessions().length === 0}>
+            <div class="overlay-empty">No sessions found</div>
+          </Show>
+          <For each={sessions()}>
+            {(s: any) => (
+              <button
+                class={`session-item ${state.sessionFile === s.path ? 'active' : ''}`}
+                onClick={() => switchSession(s.path)}
+              >
+                <span class="session-item-name">{s.name ?? s.id?.slice(0, 8) ?? s.path}</span>
+                <Show when={s.path}>
+                  <span class="session-item-path">{s.path}</span>
+                </Show>
+              </button>
+            )}
+          </For>
+        </div>
+      </div>
+    </div>
+  )
+}

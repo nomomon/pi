@@ -1,0 +1,25 @@
+{
+  "name": "@earendil-works/pi-ui",
+  "version": "0.79.6",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n client,server -c blue,green \"vite\" \"tsx server.ts\"",
+    "build": "vite build",
+    "preview": "node --import tsx/esm server.ts",
+    "start": "node --import tsx/esm server.ts"
+  },
+  "dependencies": {
+    "solid-js": "1.9.7",
+    "marked": "18.0.5",
+    "ws": "8.18.2"
+  },
+  "devDependencies": {
+    "vite": "6.3.5",
+    "vite-plugin-solid": "2.11.6",
+    "@types/ws": "8.18.1",
+    "concurrently": "9.1.2",
+    "@types/node": "22.15.32",
+    "tsx": "4.22.1"
+  }
+}
