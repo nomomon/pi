@@ -62,6 +62,7 @@ export type RpcCommand =
 	| { id?: string; type: "get_last_assistant_text" }
 	| { id?: string; type: "set_session_name"; name: string }
 	| { id?: string; type: "list_sessions"; cwd?: string }
+	| { id?: string; type: "delete_session"; sessionPath: string }
 
 	// Messages
 	| { id?: string; type: "get_messages" }
@@ -208,6 +209,7 @@ export type RpcResponse =
 				}>;
 			};
 	  }
+	| { id?: string; type: "response"; command: "delete_session"; success: true; data: { wasCurrentSession: boolean } }
 
 	// Messages
 	| { id?: string; type: "response"; command: "get_messages"; success: true; data: { messages: AgentMessage[] } }

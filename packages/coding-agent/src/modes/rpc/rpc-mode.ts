@@ -12,6 +12,7 @@
  */
 
 import * as crypto from "node:crypto";
+import * as fsPromises from "node:fs/promises";
 import type { AgentSessionRuntime } from "../../core/agent-session-runtime.ts";
 import type {
 	ExtensionUIContext,
@@ -679,6 +680,17 @@ export async function runRpcMode(runtimeHost: AgentSessionRuntime): Promise<neve
 					firstMessage: s.firstMessage,
 				}));
 				return success(id, "list_sessions", { sessions });
+			}
+
+			case "delete_session": {
+				const sessionPath = command.sessionPath;
+				const isCurrent = session.sessionManager.getSessionFile() === sessionPath;
+				try {
+					await fsPromises.unlink(sessionPath);
+				} catch (err: any) {
+					return error(id, "delete_session", `Failed to delete session: ${err.message}`);
+				}
+				return success(id, "delete_session", { wasCurrentSession: isCurrent });
 			}
 
 			default: {
