@@ -1,4 +1,4 @@
-import { createSignal, createEffect, For, Show } from 'solid-js'
+import { createSignal, onMount, For, Show } from 'solid-js'
 import { state, setState, showNotification } from '../store'
 import { sendCommand } from '../ws'
 
@@ -22,7 +22,7 @@ export default function SessionSelector(props: Props) {
   const [loading, setLoading] = createSignal(true)
   const [filter, setFilter] = createSignal('')
 
-  createEffect(async () => {
+  onMount(async () => {
     try {
       const result = await sendCommand({ type: 'list_sessions' })
       const sorted = (result?.sessions ?? []).sort(

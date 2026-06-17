@@ -1,4 +1,4 @@
-import { createSignal, createEffect, For, Show } from 'solid-js'
+import { createSignal, onMount, For, Show } from 'solid-js'
 import { state, setState, showNotification } from '../store'
 import { sendCommand } from '../ws'
 
@@ -10,7 +10,7 @@ export default function ModelSelector(props: Props) {
   const [filter, setFilter] = createSignal('')
   const [loading, setLoading] = createSignal(true)
 
-  createEffect(async () => {
+  onMount(async () => {
     try {
       const data = await sendCommand({ type: 'get_available_models' })
       setState('availableModels', data?.models ?? [])

@@ -667,8 +667,7 @@ export async function runRpcMode(runtimeHost: AgentSessionRuntime): Promise<neve
 			}
 
 			case "list_sessions": {
-				const cwd = command.cwd ?? session.sessionManager.getCwd();
-				const infos = await SessionManager.list(cwd);
+				const infos = await SessionManager.listAll();
 				const sessions = infos.map((s) => ({
 					path: s.path,
 					id: s.id,
@@ -684,7 +683,7 @@ export async function runRpcMode(runtimeHost: AgentSessionRuntime): Promise<neve
 
 			default: {
 				const unknownCommand = command as { type: string };
-				return error(undefined, unknownCommand.type, `Unknown command: ${unknownCommand.type}`);
+				return error(id, unknownCommand.type, `Unknown command: ${unknownCommand.type}`);
 			}
 		}
 	};
