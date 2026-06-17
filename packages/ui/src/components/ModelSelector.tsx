@@ -12,8 +12,8 @@ export default function ModelSelector(props: Props) {
 
   createEffect(async () => {
     try {
-      const models = await sendCommand({ type: 'get_available_models' })
-      setState('availableModels', models ?? [])
+      const data = await sendCommand({ type: 'get_available_models' })
+      setState('availableModels', data?.models ?? [])
     } catch (e) {
       showNotification('Failed to load models', 'error')
     } finally {

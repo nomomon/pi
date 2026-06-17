@@ -27,6 +27,7 @@ import {
 } from "../../core/output-guard.ts";
 import { killTrackedDetachedChildren } from "../../utils/shell.ts";
 import { type Theme, theme } from "../interactive/theme/theme.ts";
+import { SessionManager } from "../../core/session-manager.ts";
 import { attachJsonlLineReader, serializeJsonLine } from "./jsonl.ts";
 import type {
 	RpcCommand,
@@ -663,6 +664,22 @@ export async function runRpcMode(runtimeHost: AgentSessionRuntime): Promise<neve
 				}
 
 				return success(id, "get_commands", { commands });
+			}
+
+			case "list_sessions": {
+				const cwd = command.cwd ?? session.sessionManager.getCwd();
+				const infos = await SessionManager.list(cwd);
+				const sessions = infos.map((s) => ({
+					path: s.path,
+					id: s.id,
+					name: s.name,
+					cwd: s.cwd,
+					created: s.created.toISOString(),
+					modified: s.modified.toISOString(),
+					messageCount: s.messageCount,
+					firstMessage: s.firstMessage,
+				}));
+				return success(id, "list_sessions", { sessions });
 			}
 
 			default: {

@@ -8,6 +8,9 @@ const BUILTIN_COMMANDS: RpcSlashCommand[] = [
   { name: 'session', description: 'Switch or browse sessions', source: 'builtin' },
   { name: 'new', description: 'Start a new session', source: 'builtin' },
   { name: 'compact', description: 'Compact conversation context', source: 'builtin' },
+  { name: 'name', description: 'Set session name', source: 'builtin' },
+  { name: 'thinking', description: 'Set thinking level (none/low/medium/high/auto)', source: 'builtin' },
+  { name: 'export', description: 'Export session to HTML', source: 'builtin' },
 ]
 
 export default function InputArea() {
@@ -35,8 +38,8 @@ export default function InputArea() {
   })
 
   function applySuggestion(cmd: RpcSlashCommand) {
-    // For commands that take arguments (compact), leave a trailing space
-    const needsArgs = cmd.name === 'compact'
+    // For commands that take arguments, leave a trailing space
+    const needsArgs = ['compact', 'name', 'thinking'].includes(cmd.name)
     setValue(`/${cmd.name}${needsArgs ? ' ' : ''}`)
     setSelectedSuggestion(-1)
     textareaRef?.focus()
@@ -68,6 +71,41 @@ export default function InputArea() {
     if (text.startsWith('/compact')) {
       const instructions = text.slice('/compact'.length).trim() || undefined
       send({ type: 'compact', customInstructions: instructions })
+      return
+    }
+
+    if (text.startsWith('/name')) {
+      const name = text.slice('/name'.length).trim()
+      if (!name) {
+        showNotification('Usage: /name <session name>', 'warning')
+        return
+      }
+      await sendCommand({ type: 'set_session_name', name })
+      setState('sessionName', name)
+      showNotification(`Session named: ${name}`, 'info')
+      return
+    }
+
+    if (text.startsWith('/thinking')) {
+      const level = text.slice('/thinking'.length).trim()
+      const valid = ['none', 'low', 'medium', 'high', 'auto']
+      if (!valid.includes(level)) {
+        showNotification(`Usage: /thinking <${valid.join('|')}>`, 'warning')
+        return
+      }
+      await sendCommand({ type: 'set_thinking_level', level: level as any })
+      setState('thinkingLevel', level)
+      showNotification(`Thinking level: ${level}`, 'info')
+      return
+    }
+
+    if (text === '/export') {
+      try {
+        const result = await sendCommand({ type: 'export_html' })
+        showNotification(`Exported to: ${result?.path ?? 'unknown'}`, 'info', 5000)
+      } catch (e: any) {
+        showNotification(`Export failed: ${e.message}`, 'error')
+      }
       return
     }
 

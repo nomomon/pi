@@ -73,6 +73,7 @@ export type RpcCommand =
   | { id?: string; type: 'get_fork_messages' }
   | { id?: string; type: 'set_session_name'; name: string }
   | { id?: string; type: 'export_html'; outputPath?: string }
+  | { id?: string; type: 'list_sessions'; cwd?: string }
 
 export type RpcResponse =
   | { id?: string; type: 'response'; command: string; success: true; data?: any }
