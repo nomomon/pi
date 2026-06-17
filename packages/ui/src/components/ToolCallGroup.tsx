@@ -190,16 +190,22 @@ function ThinkingNode(props: { entry: ChatEntry; expanded: boolean; onToggle: ()
     return (
         <div class="tl-node">
             <Spacer class="tl-spacer-top" />
-            <div class="tl-row" style={{ 'align-items': 'flex-start', 'padding-top': '3px' }}>
-                <div class="tl-icon-col" style={{ 'padding-top': '1px' }}>
+            <div class="tl-row tl-row-thinking">
+                <div class="tl-icon-col tl-icon-col-spine">
                     <div class="tl-icon tl-icon-thinking"><ClockFading size={16} /></div>
                 </div>
                 <div class="tl-content">
-                    <button class="tl-btn" style={{ 'align-items': 'flex-start' }} onClick={props.onToggle}>
-                        <span class={`tl-label-preview${props.expanded ? ' tl-label-preview-open' : ''}`}>
+                    <div class="tl-thinking-wrap">
+                        <div class={`tl-thinking-text${props.expanded ? ' tl-thinking-text-open' : ''}`}>
                             {preview() || 'Thought process'}
-                        </span>
-                    </button>
+                        </div>
+                        <Show when={!props.expanded}>
+                            <div class="tl-thinking-fade" />
+                        </Show>
+                        <button class="tl-thinking-toggle" onClick={props.onToggle}>
+                            {props.expanded ? 'Show less' : 'Show more'}
+                        </button>
+                    </div>
                 </div>
             </div>
             <Spacer class="tl-spacer-bottom" />
