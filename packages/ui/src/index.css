@@ -302,6 +302,7 @@ body {
 
 /* ===== Step Group ===== */
 .step-group {
+  margin: 8px 0 12px;
   margin: 6px 0;
   flex-shrink: 0;
   display: flex;
@@ -313,126 +314,201 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 3px 10px 3px 6px;
+  padding: 4px 12px 4px 8px;
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: 100px;
-  color: var(--text-dim);
+  color: var(--text-muted);
   font-family: var(--font-sans);
   font-size: 12px;
   cursor: pointer;
   text-align: left;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
-.step-group-header:hover { background: var(--bg-hover); color: var(--text-muted); }
+.step-group-header:hover { background: var(--bg-hover); color: var(--text); border-color: var(--text-dim); }
 
 .step-group-chevron {
   display: flex;
   align-items: center;
 }
 
-/* ===== Timeline ===== */
-.timeline-body {
-  position: relative;
-  padding: 4px 0 4px 0;
+/* ===== Timeline collapse (CSS grid animation) ===== */
+.timeline-collapse {
+  display: grid;
+  transition: grid-template-rows 300ms ease-out;
   width: 100%;
 }
-
-/* Vertical spine */
-.timeline-body::before {
-  content: '';
-  position: absolute;
-  left: 7px;
-  top: 4px;
-  bottom: 18px;
-  width: 1px;
-  background: var(--border);
+.timeline-collapse > .timeline-body {
+  overflow: hidden;
+  min-width: 0;
 }
 
-.timeline-node {
-  position: relative;
-  padding-left: 22px;
+/* ===== Timeline (sandwich spine) ===== */
+.timeline-body {
+  width: 100%;
+  padding: 2px 0;
+  font-family: var(--font-sans);
 }
 
-.timeline-node-header {
+/* Each node is a vertical flex column */
+.tl-node { display: flex; flex-direction: column; }
+
+/* Spacer rows: 8px, contains the spine segment */
+.tl-spacer { display: flex; height: 8px; }
+.tl-icon-col {
+  width: 20px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.tl-spine-seg { width: 1px; height: 100%; background: var(--border); }
+.tl-spacer-fill { flex: 1; }
+
+/* Content row */
+.tl-row { display: flex; align-items: center; padding: 1px 0; gap: 6px; }
+
+/* Icon in the content row */
+.tl-icon {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 0;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+}
+
+/* Icon color variants */
+.tl-icon-thinking { color: var(--purple); }
+.tl-icon-running  { color: var(--yellow); }
+.tl-icon-running svg { animation: spin 1s linear infinite; }
+.tl-icon-error    { color: var(--red); }
+.tl-icon-done     { color: var(--green); }
+.tl-icon-dim      { color: var(--text-dim); }
+
+/* Content beside icon */
+.tl-content { flex: 1; min-width: 0; }
+
+/* Label button */
+.tl-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
   background: none;
   border: none;
   color: var(--text-dim);
   font-family: var(--font-sans);
   font-size: 12px;
   cursor: pointer;
-  width: 100%;
   text-align: left;
-  line-height: 1.4;
+  padding: 0;
+  gap: 6px;
 }
+.tl-btn:hover { color: var(--text-muted); }
+.tl-btn-plain { cursor: default; }
+.tl-btn-plain:hover { color: var(--text-dim); }
 
-.timeline-node-header:hover { color: var(--text-muted); }
-
-/* Icon sits over the spine */
-.timeline-node-icon {
-  position: absolute;
-  left: 0;
-  top: 4px;
-  width: 14px;
-  height: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg);
-  flex-shrink: 0;
-  z-index: 1;
-}
-
-.timeline-icon-thinking { color: var(--purple); }
-.timeline-icon-running  { color: var(--yellow); }
-.timeline-icon-error    { color: var(--red); }
-.timeline-icon-done     { color: var(--green); }
-.timeline-icon-dim      { color: var(--text-dim); }
-
-.timeline-node-label {
-  flex: 1;
+/* w-0 flex-grow trick for reliable truncation inside flex */
+.tl-label {
+  width: 0;
+  flex-grow: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--text-dim);
+  color: var(--text-muted);
 }
 
-.timeline-node-expand {
-  display: flex;
-  align-items: center;
+.tl-label-verb {
   color: var(--text-dim);
-  flex-shrink: 0;
+  margin-right: 4px;
+}
+/* Multi-line preview label (thinking text) — clamps to 2 lines when collapsed */
+.tl-label-preview {
+  width: 0;
+  flex-grow: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text-dim);
+  font-family: var(--font);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.tl-label-preview.tl-label-preview-open {
+  -webkit-line-clamp: unset;
+}
+.tl-label-error { color: var(--red); }
+
+/* Inline code fragment in labels (e.g. Ran `command`) */
+.tl-label-code {
+  font-family: var(--font);
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0 4px;
 }
 
-.timeline-node-inline {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 0;
-  font-family: var(--font-sans);
+/* Terminal-style expanded bash view */
+.tl-terminal {
+  font-family: var(--font);
   font-size: 12px;
 }
-
-.timeline-node-done {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 3px 0;
-  color: var(--green);
-  font-family: var(--font-sans);
+.tl-terminal-cmd {
+  color: var(--yellow);
+  margin-bottom: 4px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.tl-terminal-prompt { color: var(--green); font-weight: bold; margin-right: 6px; }
+.tl-terminal-output {
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 8px;
   font-size: 12px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 0;
 }
 
-.timeline-node-error .timeline-node-label { color: var(--red); }
+.tl-expand { display: flex; align-items: center; color: var(--text-dim); flex-shrink: 0; }
+
+/* Spine termination: no segment above first node or below last */
+.tl-node:first-child > .tl-spacer-top .tl-spine-seg  { background: transparent; }
+.tl-node:last-child  > .tl-spacer-bottom .tl-spine-seg { background: transparent; }
+
+/* Done node: icon-col stacks vertically so spine tail extends below the icon */
+.tl-icon-col-done { flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 1px; }
+.tl-spine-tail { width: 1px; flex: 1; margin-top: 2px; background: var(--border); }
+.tl-label-done { color: var(--text-dim); font-family: var(--font-sans); font-size: 12px; }
+
+/* Detail collapse: same grid trick as timeline-collapse */
+.tl-detail-collapse {
+  display: grid;
+  transition: grid-template-rows 250ms ease-out;
+  width: 100%;
+}
+.tl-detail-collapse > .tl-detail-row {
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* Detail rows: spine continues through expanded content */
+.tl-detail-row { display: flex; align-items: stretch; }
+.tl-detail-row > .tl-icon-col { align-items: flex-start; }
+.tl-spine-full { width: 1px; height: 100%; background: var(--border); flex-shrink: 0; }
+.tl-detail-content { flex: 1; min-width: 0; padding: 4px 0 6px 8px; }
 
 /* Expanded detail sections */
-.timeline-node-detail {
-  padding: 4px 0 6px 0;
-}
 
 .timeline-detail-text {
   font-family: var(--font);

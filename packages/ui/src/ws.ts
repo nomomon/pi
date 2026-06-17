@@ -91,6 +91,7 @@ export function send(command: RpcCommand) {
 
 export async function reloadSession() {
 	setState("messages", []);
+	histToolArgs.clear();
 	const [stateData, msgData] = await Promise.all([
 		sendCommand({ type: "get_state" }),
 		sendCommand({ type: "get_messages" }),
@@ -390,6 +391,8 @@ export function openInWorkspace(sessionPath: string, cwd: string) {
 	connect();
 }
 
+const histToolArgs = new Map<string, any>();
+
 function processHistoricalMessage(msg: any) {
 	if (msg.role === "user") {
 		const text = typeof msg.content === "string" ? msg.content : msg.content.map((c: any) => c.text).join("");
@@ -403,6 +406,9 @@ function processHistoricalMessage(msg: any) {
 		const textBlocks = msg.content.filter((c: any) => c.type === "text");
 		const thinkingBlocks = msg.content.filter((c: any) => c.type === "thinking");
 		const toolCalls = msg.content.filter((c: any) => c.type === "toolCall");
+		for (const tc of toolCalls) {
+			histToolArgs.set(tc.id, tc.arguments);
+		}
 		addMessage({
 			id: `hist_${msg.timestamp}_asst`,
 			type: "assistant",
@@ -422,6 +428,7 @@ function processHistoricalMessage(msg: any) {
 			timestamp: msg.timestamp,
 			toolCallId: msg.toolCallId,
 			toolName: msg.toolName,
+			toolArgs: histToolArgs.get(msg.toolCallId),
 			toolResult: msg.content?.map((c: any) => c.text).join(""),
 			toolIsError: msg.isError,
 			toolIsRunning: false,
