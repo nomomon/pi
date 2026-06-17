@@ -1,27 +1,69 @@
-import { For, Show, createEffect, Switch, Match } from 'solid-js'
+import { For, Show, createEffect, createMemo, createSignal, Switch, Match } from 'solid-js'
 import { state } from '../store'
 import type { ChatEntry } from '../types'
 import AssistantMessage from './AssistantMessage'
 import ToolExecution from './ToolExecution'
+import ToolCallGroup from './ToolCallGroup'
 import BashExecution from './BashExecution'
+
+type GroupedEntry =
+  | { kind: 'single'; entry: ChatEntry }
+  | { kind: 'toolGroup'; entries: ChatEntry[]; key: string }
 
 export default function ChatView() {
   let containerRef: HTMLDivElement | undefined
+  const [expanded, setExpanded] = createSignal<Record<string, boolean>>({})
+
+  function toggle(key: string) {
+    setExpanded(prev => ({ ...prev, [key]: !prev[key] }))
+  }
 
   createEffect(() => {
-    // Depend on messages length + streaming to auto-scroll
     const _ = state.messages.length
     const _s = state.isStreaming
-    // scroll to bottom
-    if (containerRef) {
-      containerRef.scrollTop = containerRef.scrollHeight
+    if (containerRef) containerRef.scrollTop = containerRef.scrollHeight
+  })
+
+  const grouped = createMemo((): GroupedEntry[] => {
+    const result: GroupedEntry[] = []
+    let group: ChatEntry[] = []
+
+    for (const entry of state.messages) {
+      if (entry.type === 'tool_execution') {
+        group.push(entry)
+      } else {
+        if (group.length > 0) {
+          result.push({ kind: 'toolGroup', entries: group, key: `group:${group[0].id}` })
+          group = []
+        }
+        result.push({ kind: 'single', entry })
+      }
     }
+
+    if (group.length > 0) {
+      result.push({ kind: 'toolGroup', entries: group, key: `group:${group[0].id}` })
+    }
+
+    return result
   })
 
   return (
     <div class="chat-view" ref={containerRef}>
-      <For each={state.messages}>
-        {(entry) => <ChatEntryRenderer entry={entry} />}
+      <For each={grouped()}>
+        {(item) => (
+          <Show
+            when={item.kind === 'toolGroup'}
+            fallback={<ChatEntryRenderer entry={(item as { kind: 'single'; entry: ChatEntry }).entry} onToggleTool={toggle} toolExpanded={expanded()} />}
+          >
+            <ToolCallGroup
+              entries={(item as { kind: 'toolGroup'; entries: ChatEntry[]; key: string }).entries}
+              expanded={expanded()[(item as { kind: 'toolGroup'; entries: ChatEntry[]; key: string }).key] ?? false}
+              onToggle={() => toggle((item as { kind: 'toolGroup'; entries: ChatEntry[]; key: string }).key)}
+              toolExpanded={expanded()}
+              onToggleTool={toggle}
+            />
+          </Show>
+        )}
       </For>
       <Show when={state.messages.length === 0 && state.connected}>
         <div class="empty-state">
@@ -33,7 +75,7 @@ export default function ChatView() {
   )
 }
 
-function ChatEntryRenderer(props: { entry: ChatEntry }) {
+function ChatEntryRenderer(props: { entry: ChatEntry; toolExpanded: Record<string, boolean>; onToggleTool: (id: string) => void }) {
   const e = () => props.entry
 
   return (
@@ -51,7 +93,11 @@ function ChatEntryRenderer(props: { entry: ChatEntry }) {
         </div>
       </Match>
       <Match when={e().type === 'tool_execution'}>
-        <ToolExecution entry={e()} />
+        <ToolExecution
+          entry={e()}
+          expanded={props.toolExpanded[e().id] ?? false}
+          onToggle={() => props.onToggleTool(e().id)}
+        />
       </Match>
       <Match when={e().type === 'bash'}>
         <div class="chat-entry bash-entry">

@@ -1,4 +1,5 @@
 import { For, Show, createSignal } from 'solid-js'
+import { ChevronDown, ChevronRight } from 'lucide-solid'
 import { parse } from 'marked'
 import type { ChatEntry, ThinkingContent } from '../types'
 
@@ -36,7 +37,11 @@ function ThinkingBlock(props: { block: ThinkingContent; isStreaming: boolean }) 
         class="thinking-header"
         onClick={() => setExpanded((v) => !v)}
       >
-        <span class="thinking-icon">{expanded() ? '▾' : '▸'}</span>
+        <span class="thinking-icon">
+          <Show when={expanded()} fallback={<ChevronRight size={12} />}>
+            <ChevronDown size={12} />
+          </Show>
+        </span>
         <span class="thinking-label">
           {props.block.redacted ? 'Redacted thinking' : props.isStreaming ? 'Thinking...' : 'Thought process'}
         </span>

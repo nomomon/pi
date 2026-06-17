@@ -123,6 +123,7 @@ body {
 .chat-entry {
   padding: 8px 12px;
   border-radius: 4px;
+  flex-shrink: 0;
 }
 
 .role-label {
@@ -177,7 +178,7 @@ body {
 
 .thinking-header:hover { background: var(--bg-hover); }
 
-.thinking-icon { font-size: 10px; }
+.thinking-icon { display: flex; align-items: center; }
 .thinking-label { flex: 1; }
 
 .thinking-body {
@@ -272,8 +273,54 @@ body {
 .usage-model { color: var(--text-dim); }
 
 /* Tool execution */
+/* Tool call group (summary container) */
+.tool-call-group {
+  margin: 4px 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.tool-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--bg-surface);
+  border: none;
+  color: var(--text-dim);
+  font-family: var(--font);
+  font-size: 12px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.tool-group-header:hover { background: var(--bg-hover); }
+
+.tool-group-chevron {
+  display: flex;
+  align-items: center;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.tool-group-summary {
+  flex: 1;
+}
+
+.tool-group-body {
+  border-top: 1px solid var(--border);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--bg);
+}
+
 .tool-execution {
-  margin: 2px 0;
+  margin: 0;
   border: 1px solid var(--border);
   border-radius: 4px;
   overflow: hidden;
@@ -286,7 +333,7 @@ body {
 .tool-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   padding: 5px 10px;
   background: var(--bg-surface);
   border: none;
@@ -301,13 +348,22 @@ body {
 .tool-header:hover { background: var(--bg-hover); }
 
 .tool-status-icon {
-  font-size: 12px;
+  display: flex;
+  align-items: center;
   width: 16px;
-  text-align: center;
+  flex-shrink: 0;
 }
-.tool-status-icon.running { color: var(--yellow); animation: spin 1s linear infinite; }
+.tool-status-icon.running { color: var(--yellow); }
+.tool-status-icon.running svg { animation: spin 1s linear infinite; }
 .tool-status-icon.error { color: var(--red); }
 .tool-status-icon.done { color: var(--green); }
+
+.tool-type-icon {
+  display: flex;
+  align-items: center;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
 
 @keyframes spin {
   from { transform: rotate(0deg); }
@@ -316,13 +372,17 @@ body {
 
 .tool-name {
   flex: 1;
-  font-weight: bold;
-  color: var(--yellow);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tool-expand-icon {
+  display: flex;
+  align-items: center;
   color: var(--text-dim);
-  font-size: 10px;
+  flex-shrink: 0;
 }
 
 .tool-body {
