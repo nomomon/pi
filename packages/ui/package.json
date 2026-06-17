@@ -10,7 +10,7 @@
     "start": "node --import tsx/esm server.ts"
   },
   "dependencies": {
-    "solid-js": "1.9.7",
+    "solid-js": "1.9.13",
     "marked": "18.0.5",
     "ws": "8.18.2"
   },
