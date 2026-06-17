@@ -26,7 +26,6 @@ export default function App() {
             </Show>
           </div>
           <div class="header-right">
-            <span class="hint">Enter: submit · Shift+Enter: newline · Ctrl+C: abort · /model /new /compact</span>
             <span class={`connection-dot ${state.connected ? 'connected' : state.connecting ? 'connecting' : 'disconnected'}`} />
           </div>
         </header>

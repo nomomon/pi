@@ -201,47 +201,49 @@ export default function InputArea() {
 
   return (
     <div class="input-area">
-      <Show when={suggestions().length > 0}>
-        <div class="slash-suggestions">
-          <For each={suggestions()}>
-            {(cmd, i) => (
-              <div
-                class={`slash-suggestion ${i() === selectedSuggestion() ? 'selected' : ''}`}
-                onMouseDown={(e) => { e.preventDefault(); applySuggestion(cmd) }}
-                onMouseEnter={() => setSelectedSuggestion(i())}
-              >
-                <span class="suggestion-name">/{cmd.name}</span>
-                {cmd.description && <span class="suggestion-desc">{cmd.description}</span>}
-                {cmd.source !== 'builtin' && <span class={`suggestion-source source-${cmd.source}`}>{cmd.source}</span>}
-              </div>
-            )}
-          </For>
+      <div class="input-wrapper">
+        <Show when={suggestions().length > 0}>
+          <div class="slash-suggestions">
+            <For each={suggestions()}>
+              {(cmd, i) => (
+                <div
+                  class={`slash-suggestion ${i() === selectedSuggestion() ? 'selected' : ''}`}
+                  onMouseDown={(e) => { e.preventDefault(); applySuggestion(cmd) }}
+                  onMouseEnter={() => setSelectedSuggestion(i())}
+                >
+                  <span class="suggestion-name">/{cmd.name}</span>
+                  {cmd.description && <span class="suggestion-desc">{cmd.description}</span>}
+                  {cmd.source !== 'builtin' && <span class={`suggestion-source source-${cmd.source}`}>{cmd.source}</span>}
+                </div>
+              )}
+            </For>
+          </div>
+        </Show>
+        <div class="input-row">
+          <textarea
+            ref={textareaRef}
+            value={value()}
+            placeholder={state.isStreaming ? 'Streaming… (Ctrl+C to abort)' : 'Message pi… (/ for commands, ! for bash)'}
+            onInput={(e) => {
+              setValue(e.currentTarget.value)
+              setSelectedSuggestion(-1)
+              autoResize()
+            }}
+            onKeyDown={handleKeyDown}
+            onCompositionStart={() => setIsComposing(true)}
+            onCompositionEnd={() => setIsComposing(false)}
+            class="chat-input"
+            rows={1}
+            disabled={!state.connected}
+          />
+          <button
+            class={`send-btn ${state.isStreaming ? 'abort-btn' : ''}`}
+            onClick={() => state.isStreaming ? send({ type: 'abort' }) : handleSubmit()}
+            disabled={!state.connected}
+          >
+            {state.isStreaming ? '■' : '▶'}
+          </button>
         </div>
-      </Show>
-      <div class="input-row">
-        <textarea
-          ref={textareaRef}
-          value={value()}
-          placeholder={state.isStreaming ? 'Streaming… (Ctrl+C to abort)' : 'Message pi… (/ for commands, ! for bash)'}
-          onInput={(e) => {
-            setValue(e.currentTarget.value)
-            setSelectedSuggestion(-1)
-            autoResize()
-          }}
-          onKeyDown={handleKeyDown}
-          onCompositionStart={() => setIsComposing(true)}
-          onCompositionEnd={() => setIsComposing(false)}
-          class="chat-input"
-          rows={1}
-          disabled={!state.connected}
-        />
-        <button
-          class={`send-btn ${state.isStreaming ? 'abort-btn' : ''}`}
-          onClick={() => state.isStreaming ? send({ type: 'abort' }) : handleSubmit()}
-          disabled={!state.connected}
-        >
-          {state.isStreaming ? '■' : '▶'}
-        </button>
       </div>
     </div>
   )
