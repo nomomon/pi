@@ -602,12 +602,17 @@ body {
     white-space: pre-wrap;
     word-break: break-word;
     line-height: 1.5;
-    max-height: calc(11px * 1.5 * 1.5);
-    /* ~24px = 1.5 lines */
+    max-height: calc(11px * 1.5 * 2.5); /* 2.5 lines */
     overflow: hidden;
     -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
     transition: max-height 0.3s ease, -webkit-mask-image 0.3s ease, mask-image 0.3s ease;
+}
+
+.tl-thinking-text-short {
+    max-height: none;
+    -webkit-mask-image: none;
+    mask-image: none;
 }
 
 .tl-thinking-text-open {

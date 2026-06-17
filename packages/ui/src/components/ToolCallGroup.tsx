@@ -1,4 +1,4 @@
-import { For, Show, Switch, Match } from 'solid-js'
+import { For, Show, Switch, Match, createSignal, onMount } from 'solid-js'
 import { ChevronDown, ChevronRight, CheckCircle2, XCircle, Loader2, TerminalSquare, FilePlus, FileText, FilePen, Search, FolderOpen, Wrench, ClockFading } from 'lucide-solid'
 import type { ChatEntry } from '../types'
 
@@ -215,6 +215,13 @@ function ThinkingNode(props: { entry: ChatEntry; expanded: boolean; onToggle: ()
     const blocks = () => props.entry.thinkingBlocks ?? []
     const preview = () => blocks().find(b => !b.redacted)?.thinking ?? ''
 
+    let textRef: HTMLDivElement | undefined
+    const [isLong, setIsLong] = createSignal(true)
+
+    onMount(() => {
+        if (textRef) setIsLong(textRef.scrollHeight > textRef.clientHeight)
+    })
+
     return (
         <div class="tl-node">
             <Spacer class="tl-spacer-top" />
@@ -224,15 +231,17 @@ function ThinkingNode(props: { entry: ChatEntry; expanded: boolean; onToggle: ()
                 </div>
                 <div class="tl-content">
                     <div class="tl-thinking-wrap">
-                        <div class={`tl-thinking-text${props.expanded ? ' tl-thinking-text-open' : ''}`}>
+                        <div
+                            ref={textRef}
+                            class={`tl-thinking-text${!isLong() ? ' tl-thinking-text-short' : props.expanded ? ' tl-thinking-text-open' : ''}`}
+                        >
                             {preview() || 'Thought process'}
                         </div>
-                        <Show when={!props.expanded}>
-                            <div class="tl-thinking-fade" />
+                        <Show when={isLong()}>
+                            <button class="tl-thinking-toggle" onClick={props.onToggle}>
+                                {props.expanded ? 'Show less' : 'Show more'}
+                            </button>
                         </Show>
-                        <button class="tl-thinking-toggle" onClick={props.onToggle}>
-                            {props.expanded ? 'Show less' : 'Show more'}
-                        </button>
                     </div>
                 </div>
             </div>
