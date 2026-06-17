@@ -26,9 +26,9 @@ import {
 	waitForRawStdoutBackpressure,
 	writeRawStdout,
 } from "../../core/output-guard.ts";
+import { SessionManager } from "../../core/session-manager.ts";
 import { killTrackedDetachedChildren } from "../../utils/shell.ts";
 import { type Theme, theme } from "../interactive/theme/theme.ts";
-import { SessionManager } from "../../core/session-manager.ts";
 import { attachJsonlLineReader, serializeJsonLine } from "./jsonl.ts";
 import type {
 	RpcCommand,
@@ -706,8 +706,13 @@ export async function runRpcMode(runtimeHost: AgentSessionRuntime): Promise<neve
 					for (let i = lines.length - 1; i >= 0; i--) {
 						try {
 							const entry = JSON.parse(lines[i]);
-							if (entry.id) { parentId = entry.id; break; }
-						} catch { /* skip */ }
+							if (entry.id) {
+								parentId = entry.id;
+								break;
+							}
+						} catch {
+							/* skip */
+						}
 					}
 					const entry = {
 						type: "session_info",
@@ -716,7 +721,7 @@ export async function runRpcMode(runtimeHost: AgentSessionRuntime): Promise<neve
 						timestamp: new Date().toISOString(),
 						name: name.trim(),
 					};
-					await fsPromises.appendFile(sessionPath, JSON.stringify(entry) + "\n", "utf8");
+					await fsPromises.appendFile(sessionPath, `${JSON.stringify(entry)}\n`, "utf8");
 				} catch (err: any) {
 					return error(id, "rename_session", `Failed to rename session: ${err.message}`);
 				}
