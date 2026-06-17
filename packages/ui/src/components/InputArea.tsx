@@ -1,16 +1,46 @@
-import { createSignal } from 'solid-js'
+import { createSignal, createMemo, For, Show } from 'solid-js'
 import { state, setState, pushHistory, showNotification } from '../store'
-import { send, sendCommand } from '../ws'
+import { send, sendCommand, sendBash } from '../ws'
+import type { RpcSlashCommand } from '../types'
+
+const BUILTIN_COMMANDS: RpcSlashCommand[] = [
+  { name: 'model', description: 'Switch model', source: 'builtin' },
+  { name: 'session', description: 'Switch or browse sessions', source: 'builtin' },
+  { name: 'new', description: 'Start a new session', source: 'builtin' },
+  { name: 'compact', description: 'Compact conversation context', source: 'builtin' },
+]
 
 export default function InputArea() {
   let textareaRef: HTMLTextAreaElement | undefined
   const [value, setValue] = createSignal('')
   const [isComposing, setIsComposing] = createSignal(false)
+  const [selectedSuggestion, setSelectedSuggestion] = createSignal(-1)
 
   function autoResize() {
     if (!textareaRef) return
     textareaRef.style.height = 'auto'
     textareaRef.style.height = Math.min(textareaRef.scrollHeight, 300) + 'px'
+  }
+
+  // Slash suggestions: show when text starts with / and no space yet (still entering the command name)
+  const suggestions = createMemo<RpcSlashCommand[]>(() => {
+    const v = value()
+    if (!v.startsWith('/')) return []
+    const query = v.slice(1).toLowerCase()
+    // Once the user types a space after the command, suggestions are done
+    if (query.includes(' ')) return []
+    const all = [...BUILTIN_COMMANDS, ...state.slashCommands]
+    if (!query) return all
+    return all.filter((c) => c.name.toLowerCase().startsWith(query))
+  })
+
+  function applySuggestion(cmd: RpcSlashCommand) {
+    // For commands that take arguments (compact), leave a trailing space
+    const needsArgs = cmd.name === 'compact'
+    setValue(`/${cmd.name}${needsArgs ? ' ' : ''}`)
+    setSelectedSuggestion(-1)
+    textareaRef?.focus()
+    autoResize()
   }
 
   async function handleSubmit() {
@@ -23,19 +53,12 @@ export default function InputArea() {
 
     pushHistory(text)
     setValue('')
-    if (textareaRef) {
-      textareaRef.style.height = 'auto'
-    }
+    setSelectedSuggestion(-1)
+    if (textareaRef) textareaRef.style.height = 'auto'
 
-    // Handle slash commands
-    if (text.startsWith('/model')) {
-      setState('view', 'models')
-      return
-    }
-    if (text.startsWith('/session')) {
-      setState('view', 'sessions')
-      return
-    }
+    // Slash commands
+    if (text.startsWith('/model')) { setState('view', 'models'); return }
+    if (text.startsWith('/session')) { setState('view', 'sessions'); return }
     if (text === '/new') {
       await sendCommand({ type: 'new_session' })
       showNotification('New session started', 'info')
@@ -47,9 +70,12 @@ export default function InputArea() {
       send({ type: 'compact', customInstructions: instructions })
       return
     }
+
+    // Bash
     if (text.startsWith('!')) {
-      const command = text.slice(1).trim()
-      send({ type: 'bash', command })
+      const excludeFromContext = text.startsWith('!!')
+      const command = text.slice(excludeFromContext ? 2 : 1).trim()
+      sendBash(command, excludeFromContext)
       return
     }
 
@@ -59,6 +85,33 @@ export default function InputArea() {
 
   function handleKeyDown(e: KeyboardEvent) {
     if (isComposing()) return
+
+    // Suggestion navigation
+    const suggs = suggestions()
+    if (suggs.length > 0) {
+      if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        setSelectedSuggestion((i) => (i <= 0 ? suggs.length - 1 : i - 1))
+        return
+      }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        setSelectedSuggestion((i) => (i >= suggs.length - 1 ? 0 : i + 1))
+        return
+      }
+      if (e.key === 'Tab' || (e.key === 'Enter' && selectedSuggestion() >= 0)) {
+        e.preventDefault()
+        const idx = selectedSuggestion() >= 0 ? selectedSuggestion() : 0
+        applySuggestion(suggs[idx])
+        return
+      }
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        setSelectedSuggestion(-1)
+        setValue('')
+        return
+      }
+    }
 
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
@@ -76,10 +129,7 @@ export default function InputArea() {
     }
 
     if (e.key === 'Escape') {
-      if (state.view !== 'chat') {
-        setState('view', 'chat')
-        e.preventDefault()
-      }
+      if (state.view !== 'chat') { setState('view', 'chat'); e.preventDefault() }
       return
     }
 
@@ -93,9 +143,7 @@ export default function InputArea() {
           setState('historyIndex', idx)
           setValue(state.inputHistory[idx])
           setTimeout(() => {
-            if (textareaRef) {
-              textareaRef.selectionStart = textareaRef.selectionEnd = textareaRef.value.length
-            }
+            if (textareaRef) textareaRef.selectionStart = textareaRef.selectionEnd = textareaRef.value.length
           }, 0)
         }
       }
@@ -107,11 +155,7 @@ export default function InputArea() {
         e.preventDefault()
         const idx = state.historyIndex - 1
         setState('historyIndex', idx)
-        if (idx < 0) {
-          setValue('')
-        } else {
-          setValue(state.inputHistory[idx])
-        }
+        setValue(idx < 0 ? '' : state.inputHistory[idx])
       }
       return
     }
@@ -119,34 +163,48 @@ export default function InputArea() {
 
   return (
     <div class="input-area">
-      <textarea
-        ref={textareaRef}
-        value={value()}
-        placeholder={state.isStreaming ? 'Streaming... (Ctrl+C to abort)' : 'Message pi... (/ for commands, ! for bash)'}
-        onInput={(e) => {
-          setValue(e.currentTarget.value)
-          autoResize()
-        }}
-        onKeyDown={handleKeyDown}
-        onCompositionStart={() => setIsComposing(true)}
-        onCompositionEnd={() => setIsComposing(false)}
-        class="chat-input"
-        rows={1}
-        disabled={!state.connected}
-      />
-      <button
-        class={`send-btn ${state.isStreaming ? 'abort-btn' : ''}`}
-        onClick={() => {
-          if (state.isStreaming) {
-            send({ type: 'abort' })
-          } else {
-            handleSubmit()
-          }
-        }}
-        disabled={!state.connected}
-      >
-        {state.isStreaming ? '■' : '▶'}
-      </button>
+      <Show when={suggestions().length > 0}>
+        <div class="slash-suggestions">
+          <For each={suggestions()}>
+            {(cmd, i) => (
+              <div
+                class={`slash-suggestion ${i() === selectedSuggestion() ? 'selected' : ''}`}
+                onMouseDown={(e) => { e.preventDefault(); applySuggestion(cmd) }}
+                onMouseEnter={() => setSelectedSuggestion(i())}
+              >
+                <span class="suggestion-name">/{cmd.name}</span>
+                {cmd.description && <span class="suggestion-desc">{cmd.description}</span>}
+                {cmd.source !== 'builtin' && <span class={`suggestion-source source-${cmd.source}`}>{cmd.source}</span>}
+              </div>
+            )}
+          </For>
+        </div>
+      </Show>
+      <div class="input-row">
+        <textarea
+          ref={textareaRef}
+          value={value()}
+          placeholder={state.isStreaming ? 'Streaming… (Ctrl+C to abort)' : 'Message pi… (/ for commands, ! for bash)'}
+          onInput={(e) => {
+            setValue(e.currentTarget.value)
+            setSelectedSuggestion(-1)
+            autoResize()
+          }}
+          onKeyDown={handleKeyDown}
+          onCompositionStart={() => setIsComposing(true)}
+          onCompositionEnd={() => setIsComposing(false)}
+          class="chat-input"
+          rows={1}
+          disabled={!state.connected}
+        />
+        <button
+          class={`send-btn ${state.isStreaming ? 'abort-btn' : ''}`}
+          onClick={() => state.isStreaming ? send({ type: 'abort' }) : handleSubmit()}
+          disabled={!state.connected}
+        >
+          {state.isStreaming ? '■' : '▶'}
+        </button>
+      </div>
     </div>
   )
 }

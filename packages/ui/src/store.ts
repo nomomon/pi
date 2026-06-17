@@ -1,5 +1,5 @@
 import { createStore, produce } from 'solid-js/store'
-import type { ChatEntry, RpcSessionState } from './types'
+import type { ChatEntry, RpcSessionState, RpcSlashCommand } from './types'
 
 export interface ToolExecutionState {
   toolCallId: string
@@ -28,6 +28,7 @@ export interface AppState {
   historyIndex: number
   view: 'chat' | 'models' | 'sessions'
   availableModels: any[]
+  slashCommands: RpcSlashCommand[]
   notification: { text: string; kind: 'info' | 'warning' | 'error' } | null
   pendingResponses: Record<string, { resolve: (v: any) => void; reject: (e: any) => void }>
   totalTokens: number
@@ -50,6 +51,7 @@ export const [state, setState] = createStore<AppState>({
   historyIndex: -1,
   view: 'chat',
   availableModels: [],
+  slashCommands: [],
   notification: null,
   pendingResponses: {},
   totalTokens: 0,

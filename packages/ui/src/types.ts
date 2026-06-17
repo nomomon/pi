@@ -111,11 +111,19 @@ export type AgentEvent =
   | { type: 'abort' }
   | { type: 'error'; message: string }
 
+// ---- Slash command ----
+
+export interface RpcSlashCommand {
+  name: string
+  description?: string
+  source: 'extension' | 'prompt' | 'skill' | 'builtin'
+}
+
 // ---- Chat display types ----
 
 export interface ChatEntry {
   id: string
-  type: 'user' | 'assistant' | 'tool_execution' | 'compaction' | 'system'
+  type: 'user' | 'assistant' | 'tool_execution' | 'bash' | 'compaction' | 'system'
   timestamp: number
   // user
   text?: string
@@ -135,6 +143,12 @@ export interface ChatEntry {
   toolIsError?: boolean
   toolIsRunning?: boolean
   toolPartialResult?: any
+  // bash
+  bashCommand?: string
+  bashOutput?: string
+  bashExitCode?: number
+  bashIsRunning?: boolean
+  bashTruncated?: boolean
   // compaction / system
   message?: string
 }

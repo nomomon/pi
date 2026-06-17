@@ -30,12 +30,17 @@ export function connect() {
     })
     sendCommand({ type: 'get_messages' }).then((data: any) => {
       if (data?.messages) {
-        // Convert historical messages to ChatEntry format
         for (const msg of data.messages) {
           processHistoricalMessage(msg)
         }
       }
     })
+    // Fetch slash commands for autocomplete
+    sendCommand({ type: 'get_commands' }).then((data: any) => {
+      if (data?.commands) {
+        setState('slashCommands', data.commands)
+      }
+    }).catch(() => {})
   }
 
   ws.onmessage = (event) => {
@@ -72,6 +77,33 @@ export function send(command: RpcCommand) {
     return
   }
   ws.send(JSON.stringify(command))
+}
+
+export function sendBash(command: string, excludeFromContext = false) {
+  const entryId = `bash_${Date.now()}`
+  addMessage({
+    id: entryId,
+    type: 'bash',
+    timestamp: Date.now(),
+    bashCommand: command,
+    bashIsRunning: true,
+  })
+  sendCommand({ type: 'bash', command, excludeFromContext })
+    .then((result: any) => {
+      updateMessage(entryId, (e) => {
+        e.bashIsRunning = false
+        e.bashOutput = result?.output ?? ''
+        e.bashExitCode = result?.exitCode
+        e.bashTruncated = result?.truncated
+      })
+    })
+    .catch((err: Error) => {
+      updateMessage(entryId, (e) => {
+        e.bashIsRunning = false
+        e.bashOutput = `Error: ${err.message}`
+        e.bashExitCode = 1
+      })
+    })
 }
 
 export function sendCommand<T = any>(command: RpcCommand): Promise<T> {

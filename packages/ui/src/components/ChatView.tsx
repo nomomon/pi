@@ -3,6 +3,7 @@ import { state } from '../store'
 import type { ChatEntry } from '../types'
 import AssistantMessage from './AssistantMessage'
 import ToolExecution from './ToolExecution'
+import BashExecution from './BashExecution'
 
 export default function ChatView() {
   let containerRef: HTMLDivElement | undefined
@@ -51,6 +52,11 @@ function ChatEntryRenderer(props: { entry: ChatEntry }) {
       </Match>
       <Match when={e().type === 'tool_execution'}>
         <ToolExecution entry={e()} />
+      </Match>
+      <Match when={e().type === 'bash'}>
+        <div class="chat-entry bash-entry">
+          <BashExecution entry={e()} />
+        </div>
       </Match>
       <Match when={e().type === 'compaction'}>
         <div class="chat-entry compaction-entry">
