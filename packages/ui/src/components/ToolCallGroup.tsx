@@ -76,7 +76,7 @@ function toolTarget(name: string, args: any): string {
 function Spacer(props: { class?: string }) {
     return (
         <div class={`tl-spacer ${props.class ?? ''}`}>
-            <div class="tl-icon-col"><div class="tl-spine-seg" /></div>
+            <div class="tl-icon-col" />
             <div class="tl-spacer-fill" />
         </div>
     )
@@ -175,18 +175,17 @@ export default function StepGroup(props: Props) {
                             </Switch>
                         )}
                     </For>
-                    {/* Done node: spine tail extends below the icon, no bottom spacer */}
                     <div class="tl-node">
                         <Spacer class="tl-spacer-top" />
                         <div class="tl-row">
-                            <div class="tl-icon-col tl-icon-col-done">
+                            <div class="tl-icon-col">
                                 <div class="tl-icon tl-icon-done"><CheckCircle2 size={16} /></div>
-                                <div class="tl-spine-tail" />
                             </div>
                             <div class="tl-content">
                                 <span class="tl-label-done">Done</span>
                             </div>
                         </div>
+                        <Spacer class="tl-spacer-bottom" />
                     </div>
                 </div>
             </div>
@@ -200,7 +199,7 @@ function InlineNode(props: { iconClass: string; icon: any; label: string; labelC
         <div class="tl-node">
             <Spacer class="tl-spacer-top" />
             <div class="tl-row">
-                <div class="tl-icon-col tl-icon-col-spine">
+                <div class="tl-icon-col">
                     <div class={`tl-icon ${props.iconClass}`}>{props.icon}</div>
                 </div>
                 <div class="tl-content">
@@ -220,7 +219,7 @@ function ThinkingNode(props: { entry: ChatEntry; expanded: boolean; onToggle: ()
         <div class="tl-node">
             <Spacer class="tl-spacer-top" />
             <div class="tl-row tl-row-thinking">
-                <div class="tl-icon-col tl-icon-col-spine">
+                <div class="tl-icon-col">
                     <div class="tl-icon tl-icon-thinking"><ClockFading size={16} /></div>
                 </div>
                 <div class="tl-content">
@@ -261,7 +260,7 @@ function ToolNode(props: { entry: ChatEntry; expanded: boolean; onToggle: () => 
         <div class="tl-node">
             <Spacer class="tl-spacer-top" />
             <div class="tl-row">
-                <div class="tl-icon-col tl-icon-col-spine">
+                <div class="tl-icon-col">
                     <div class={`tl-icon tl-icon-${status()}`}>
                         <Show when={props.entry.toolIsRunning}>
                             <Loader2 size={16} class="spin" />
@@ -287,7 +286,7 @@ function ToolNode(props: { entry: ChatEntry; expanded: boolean; onToggle: () => 
             </div>
             <div class="tl-detail-collapse" style={{ 'grid-template-rows': props.expanded ? '1fr' : '0fr' }}>
                 <div class="tl-detail-row">
-                    <div class="tl-icon-col"><div class="tl-spine-full" /></div>
+                    <div class="tl-icon-col" />
                     <div class="tl-detail-content">
                         <ToolArgDisplay name={props.entry.toolName ?? ''} args={props.entry.toolArgs} />
                         <Show when={resultText()}>
@@ -316,7 +315,7 @@ function BashNode(props: { entry: ChatEntry; expanded: boolean; onToggle: () => 
         <div class="tl-node">
             <Spacer class="tl-spacer-top" />
             <div class="tl-row">
-                <div class="tl-icon-col tl-icon-col-spine">
+                <div class="tl-icon-col">
                     <div class={`tl-icon ${props.entry.bashIsRunning ? 'tl-icon-running' : !exitOk() ? 'tl-icon-error' : 'tl-icon-dim'}`}>
                         <Show when={props.entry.bashIsRunning} fallback={
                             <Show when={!exitOk()} fallback={<TerminalSquare size={16} />}>
@@ -344,7 +343,7 @@ function BashNode(props: { entry: ChatEntry; expanded: boolean; onToggle: () => 
             </div>
             <div class="tl-detail-collapse" style={{ 'grid-template-rows': props.expanded && hasOutput() ? '1fr' : '0fr' }}>
                 <div class="tl-detail-row">
-                    <div class="tl-icon-col"><div class="tl-spine-full" /></div>
+                    <div class="tl-icon-col" />
                     <div class="tl-detail-content">
                         <div class="timeline-detail-section">
                             <div class="timeline-detail-label">Command</div>

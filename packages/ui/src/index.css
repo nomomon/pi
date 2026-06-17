@@ -390,7 +390,6 @@ body {
 
 /* ===== Step Group ===== */
 .step-group {
-    margin: 8px 0 12px;
     margin: 6px 0;
     flex-shrink: 0;
     display: flex;
@@ -461,40 +460,12 @@ body {
     flex-shrink: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
-}
-
-.tl-spine-seg {
-    width: 1px;
-    height: 100%;
-    background: var(--border);
-}
-
-.tl-spacer-fill {
-    flex: 1;
-}
-
-/* Content row */
-.tl-row {
-    display: flex;
-    align-items: center;
-    padding: 1px 0;
-    gap: 6px;
-}
-
-.tl-row-thinking {
-    align-items: flex-start;
-    padding-top: 4px;
-}
-
-/* Spine runs through multi-line rows via pseudo-element */
-.tl-icon-col-spine {
-    position: relative;
-    align-self: stretch;
     align-items: start;
+    align-self: stretch;
+    position: relative;
 }
 
-.tl-icon-col-spine::before {
+.tl-icon-col::before {
     content: '';
     position: absolute;
     top: 0;
@@ -505,11 +476,27 @@ body {
     background: var(--border);
 }
 
-.tl-icon-col-spine .tl-icon {
+.tl-icon-col .tl-icon {
     position: relative;
     z-index: 1;
     background: var(--bg);
     border-radius: 2px;
+}
+
+.tl-spacer-fill {
+    flex: 1;
+}
+
+/* Content row */
+.tl-row {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    gap: 6px;
+}
+
+.tl-row-thinking {
+    align-items: flex-start;
 }
 
 /* Icon in the content row */
@@ -694,35 +681,17 @@ body {
     margin: 0;
 }
 
-.tl-expand {
-    display: flex;
-    align-items: center;
-    color: var(--text-dim);
-    flex-shrink: 0;
-}
-
 /* Spine termination: no segment above first node or below last */
-.tl-node:first-child>.tl-spacer-top .tl-spine-seg {
+.tl-node:first-child>.tl-spacer-top .tl-icon-col::before {
     background: transparent;
 }
 
-.tl-node:last-child>.tl-spacer-bottom .tl-spine-seg {
+.tl-node:last-child>.tl-spacer-bottom .tl-icon-col::before {
     background: transparent;
 }
 
-/* Done node: icon-col stacks vertically so spine tail extends below the icon */
-.tl-icon-col-done {
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding-top: 1px;
-}
-
-.tl-spine-tail {
-    width: 1px;
-    flex: 1;
-    margin-top: 2px;
-    background: var(--border);
+.tl-content {
+    line-height: 1;
 }
 
 .tl-label-done {
@@ -751,13 +720,6 @@ body {
 
 .tl-detail-row>.tl-icon-col {
     align-items: flex-start;
-}
-
-.tl-spine-full {
-    width: 1px;
-    height: 100%;
-    background: var(--border);
-    flex-shrink: 0;
 }
 
 .tl-detail-content {
