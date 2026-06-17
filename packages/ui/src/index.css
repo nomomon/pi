@@ -491,8 +491,7 @@ body {
 .tl-icon-col-spine {
     position: relative;
     align-self: stretch;
-    align-items: flex-start;
-    padding-top: 1px;
+    align-items: start;
 }
 
 .tl-icon-col-spine::before {
@@ -594,6 +593,13 @@ body {
 .tl-label-verb {
     color: var(--text-dim);
     margin-right: 4px;
+}
+
+.tl-label-inline {
+    width: auto;
+    flex-grow: 0;
+    font-family: var(--font-sans);
+    font-size: 12px;
 }
 
 /* Thinking block fade */
@@ -812,16 +818,6 @@ body {
     color: var(--text-dim);
     font-family: var(--font-sans);
     font-size: 12px;
-}
-
-.timeline-bash-prompt {
-    color: var(--green);
-    font-weight: bold;
-    margin-right: 4px;
-}
-
-.timeline-bash-spin {
-    color: var(--text-dim);
 }
 
 .timeline-bash-exit {
@@ -1450,10 +1446,6 @@ body {
 }
 
 /* Bash execution entry */
-.bash-entry {
-    padding: 6px 12px;
-}
-
 .bash-execution {
     font-family: var(--font);
 }

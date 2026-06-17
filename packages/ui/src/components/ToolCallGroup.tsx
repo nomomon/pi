@@ -82,6 +82,37 @@ function Spacer(props: { class?: string }) {
     )
 }
 
+function ToolArgDisplay(props: { name: string; args: any }) {
+    const label = () => {
+        switch (props.name) {
+            case 'read': case 'write': case 'edit': return 'File'
+            case 'grep': return 'Pattern'
+            case 'find': return 'Path'
+            case 'ls': return 'Path'
+            case 'bash': return 'Command'
+            default: return 'Input'
+        }
+    }
+    const value = () => {
+        switch (props.name) {
+            case 'read': case 'write': case 'edit': return props.args?.file_path ?? ''
+            case 'grep': return props.args?.pattern ?? ''
+            case 'find': return props.args?.pattern ?? props.args?.path ?? ''
+            case 'ls': return props.args?.path ?? '.'
+            case 'bash': return props.args?.command ?? ''
+            default: return JSON.stringify(props.args, null, 2)
+        }
+    }
+    return (
+        <Show when={value()}>
+            <div class="timeline-detail-section">
+                <div class="timeline-detail-label">{label()}</div>
+                <pre class="timeline-detail-code">{value()}</pre>
+            </div>
+        </Show>
+    )
+}
+
 interface Props {
     entries: ChatEntry[]
     expanded: boolean
@@ -169,13 +200,11 @@ function InlineNode(props: { iconClass: string; icon: any; label: string; labelC
         <div class="tl-node">
             <Spacer class="tl-spacer-top" />
             <div class="tl-row">
-                <div class="tl-icon-col">
+                <div class="tl-icon-col tl-icon-col-spine">
                     <div class={`tl-icon ${props.iconClass}`}>{props.icon}</div>
                 </div>
                 <div class="tl-content">
-                    <div class={`tl-btn tl-btn-plain`}>
-                        <span class={`tl-label ${props.labelClass ?? ''}`}>{props.label}</span>
-                    </div>
+                    <span class={`tl-label tl-label-inline ${props.labelClass ?? ''}`}>{props.label}</span>
                 </div>
             </div>
             <Spacer class="tl-spacer-bottom" />
@@ -217,7 +246,7 @@ function ToolNode(props: { entry: ChatEntry; expanded: boolean; onToggle: () => 
     const status = () => {
         if (props.entry.toolIsRunning) return 'running'
         if (props.entry.toolIsError) return 'error'
-        return 'done'
+        return 'dim'
     }
 
     const resultText = () => {
@@ -232,7 +261,7 @@ function ToolNode(props: { entry: ChatEntry; expanded: boolean; onToggle: () => 
         <div class="tl-node">
             <Spacer class="tl-spacer-top" />
             <div class="tl-row">
-                <div class="tl-icon-col">
+                <div class="tl-icon-col tl-icon-col-spine">
                     <div class={`tl-icon tl-icon-${status()}`}>
                         <Show when={props.entry.toolIsRunning}>
                             <Loader2 size={16} class="spin" />
@@ -260,36 +289,15 @@ function ToolNode(props: { entry: ChatEntry; expanded: boolean; onToggle: () => 
                 <div class="tl-detail-row">
                     <div class="tl-icon-col"><div class="tl-spine-full" /></div>
                     <div class="tl-detail-content">
-                        <Show when={props.entry.toolName === 'bash'} fallback={
-                            <>
-                                <Show when={props.entry.toolArgs}>
-                                    <div class="timeline-detail-section">
-                                        <div class="timeline-detail-label">Input</div>
-                                        <pre class="timeline-detail-code">{JSON.stringify(props.entry.toolArgs, null, 2)}</pre>
-                                    </div>
-                                </Show>
-                                <Show when={resultText()}>
-                                    <div class="timeline-detail-section">
-                                        <div class="timeline-detail-label">{props.entry.toolIsError ? 'Error' : 'Output'}</div>
-                                        <pre class={`timeline-detail-code${props.entry.toolIsError ? ' timeline-detail-error' : ''}`}>{resultText()}</pre>
-                                    </div>
-                                </Show>
-                                <Show when={props.entry.toolIsRunning && !resultText()}>
-                                    <div class="timeline-detail-dim">Running…</div>
-                                </Show>
-                            </>
-                        }>
-                            <div class="tl-terminal">
-                                <div class="tl-terminal-cmd">
-                                    <span class="tl-terminal-prompt">$</span>{props.entry.toolArgs?.command}
-                                </div>
-                                <Show when={resultText()}>
-                                    <pre class={`tl-terminal-output${props.entry.toolIsError ? ' timeline-detail-error' : ''}`}>{resultText()}</pre>
-                                </Show>
-                                <Show when={props.entry.toolIsRunning && !resultText()}>
-                                    <div class="timeline-detail-dim">Running…</div>
-                                </Show>
+                        <ToolArgDisplay name={props.entry.toolName ?? ''} args={props.entry.toolArgs} />
+                        <Show when={resultText()}>
+                            <div class="timeline-detail-section">
+                                <div class="timeline-detail-label">{props.entry.toolIsError ? 'Error' : 'Output'}</div>
+                                <pre class={`timeline-detail-code${props.entry.toolIsError ? ' timeline-detail-error' : ''}`}>{resultText()}</pre>
                             </div>
+                        </Show>
+                        <Show when={props.entry.toolIsRunning && !resultText()}>
+                            <div class="timeline-detail-dim">Running…</div>
                         </Show>
                     </div>
                 </div>
@@ -308,9 +316,13 @@ function BashNode(props: { entry: ChatEntry; expanded: boolean; onToggle: () => 
         <div class="tl-node">
             <Spacer class="tl-spacer-top" />
             <div class="tl-row">
-                <div class="tl-icon-col">
-                    <div class={`tl-icon ${props.entry.bashIsRunning ? 'tl-icon-running' : exitOk() ? 'tl-icon-dim' : 'tl-icon-error'}`}>
-                        <Show when={props.entry.bashIsRunning} fallback={<TerminalSquare size={16} />}>
+                <div class="tl-icon-col tl-icon-col-spine">
+                    <div class={`tl-icon ${props.entry.bashIsRunning ? 'tl-icon-running' : !exitOk() ? 'tl-icon-error' : 'tl-icon-dim'}`}>
+                        <Show when={props.entry.bashIsRunning} fallback={
+                            <Show when={!exitOk()} fallback={<TerminalSquare size={16} />}>
+                                <XCircle size={16} />
+                            </Show>
+                        }>
                             <Loader2 size={16} class="spin" />
                         </Show>
                     </div>
@@ -334,17 +346,22 @@ function BashNode(props: { entry: ChatEntry; expanded: boolean; onToggle: () => 
                 <div class="tl-detail-row">
                     <div class="tl-icon-col"><div class="tl-spine-full" /></div>
                     <div class="tl-detail-content">
-                        <div class="tl-terminal">
-                            <div class="tl-terminal-cmd">
-                                <span class="tl-terminal-prompt">$</span>{props.entry.bashCommand}
-                            </div>
-                            <Show when={props.entry.bashOutput}>
-                                <pre class="tl-terminal-output">{props.entry.bashOutput}</pre>
-                            </Show>
-                            <Show when={props.entry.bashTruncated}>
-                                <div class="timeline-detail-dim" style={{ 'font-style': 'italic', 'margin-top': '3px' }}>output truncated</div>
-                            </Show>
+                        <div class="timeline-detail-section">
+                            <div class="timeline-detail-label">Command</div>
+                            <pre class="timeline-detail-code">{props.entry.bashCommand}</pre>
                         </div>
+                        <Show when={props.entry.bashOutput}>
+                            <div class="timeline-detail-section">
+                                <div class="timeline-detail-label">{exitOk() ? 'Output' : 'Error'}</div>
+                                <pre class={`timeline-detail-code${!exitOk() ? ' timeline-detail-error' : ''}`}>{props.entry.bashOutput}</pre>
+                            </div>
+                        </Show>
+                        <Show when={props.entry.bashIsRunning && !props.entry.bashOutput}>
+                            <div class="timeline-detail-dim">Running…</div>
+                        </Show>
+                        <Show when={props.entry.bashTruncated}>
+                            <div class="timeline-detail-dim" style={{ 'font-style': 'italic', 'margin-top': '3px' }}>output truncated</div>
+                        </Show>
                     </div>
                 </div>
             </div>
