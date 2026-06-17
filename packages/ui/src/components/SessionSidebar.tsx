@@ -1,6 +1,7 @@
-import { createSignal, createEffect, For, Show, onMount } from 'solid-js'
+import { createSignal, createEffect, For, Show, onMount, onCleanup } from 'solid-js'
+import { Portal } from 'solid-js/web'
 import { state, showNotification } from '../store'
-import { sendCommand, reloadSession } from '../ws'
+import { sendCommand, reloadSession, openInWorkspace } from '../ws'
 
 interface SessionItem {
   path: string
@@ -18,6 +19,13 @@ interface WorkspaceGroup {
   collapsed: boolean
 }
 
+interface MenuState {
+  sessionPath: string
+  session: SessionItem
+  top: number
+  left: number
+}
+
 function shortPath(cwd: string): string {
   // Show just the last 2 path segments for readability
   const parts = cwd.replace(/\\/g, '/').split('/').filter(Boolean)
@@ -28,7 +36,7 @@ export default function SessionSidebar() {
   const [groups, setGroups] = createSignal<WorkspaceGroup[]>([])
   const [renamingPath, setRenamingPath] = createSignal<string | null>(null)
   const [renameValue, setRenameValue] = createSignal('')
-  const [openMenuPath, setOpenMenuPath] = createSignal<string | null>(null)
+  const [menuState, setMenuState] = createSignal<MenuState | null>(null)
 
   async function loadSessions() {
     try {
@@ -52,11 +60,17 @@ export default function SessionSidebar() {
     }
   }
 
-  onMount(() => { loadSessions() })
+  onMount(() => {
+    loadSessions()
+    const close = () => setMenuState(null)
+    document.addEventListener('click', close)
+    onCleanup(() => document.removeEventListener('click', close))
+  })
 
-  // Reload sessions whenever the current session changes
+  // Reload sessions whenever the current session file or name changes
   createEffect(() => {
-    const _ = state.sessionFile
+    const _f = state.sessionFile
+    const _n = state.sessionName
     loadSessions()
   })
 
@@ -64,37 +78,26 @@ export default function SessionSidebar() {
     setGroups((gs) => gs.map((g) => g.cwd === cwd ? { ...g, collapsed: !g.collapsed } : g))
   }
 
-  async function openSession(sessionPath: string) {
-    setOpenMenuPath(null)
-    try {
-      await sendCommand({ type: 'switch_session', sessionPath })
-      await reloadSession()
-    } catch {
-      showNotification('Failed to switch session', 'error')
-    }
+  async function openSession(s: SessionItem) {
+    setMenuState(null)
+    openInWorkspace(s.path, s.cwd || '')
   }
 
   function startRename(s: SessionItem) {
-    setOpenMenuPath(null)
     setRenamingPath(s.path)
     setRenameValue(s.name ?? '')
   }
 
   async function commitRename(sessionPath: string) {
     const name = renameValue().trim()
-    if (!name) { setRenamingPath(null); return }
+    setRenamingPath(null)
+    if (!name) return
     try {
-      // If it's the current session, use set_session_name directly
       if (state.sessionFile === sessionPath) {
         await sendCommand({ type: 'set_session_name', name })
       } else {
-        // For non-active sessions we'd need a different approach;
-        // for now, only allow renaming the active session
-        showNotification('Can only rename the active session', 'warning')
-        setRenamingPath(null)
-        return
+        await sendCommand({ type: 'rename_session', sessionPath, name })
       }
-      setRenamingPath(null)
       await loadSessions()
     } catch {
       showNotification('Failed to rename session', 'error')
@@ -102,7 +105,7 @@ export default function SessionSidebar() {
   }
 
   async function deleteSession(sessionPath: string) {
-    setOpenMenuPath(null)
+    setMenuState(null)
     if (!confirm('Delete this session?')) return
     const wasCurrent = state.sessionFile === sessionPath
     try {
@@ -118,18 +121,15 @@ export default function SessionSidebar() {
     }
   }
 
-  function handleMenuClick(e: MouseEvent, sessionPath: string) {
+  function openMenu(e: MouseEvent, s: SessionItem) {
     e.stopPropagation()
-    setOpenMenuPath((p) => (p === sessionPath ? null : sessionPath))
-  }
-
-  // Close menu on outside click
-  function handleDocClick() {
-    setOpenMenuPath(null)
+    if (menuState()?.sessionPath === s.path) { setMenuState(null); return }
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+    setMenuState({ sessionPath: s.path, session: s, top: rect.bottom + 2, left: rect.right - 120 })
   }
 
   return (
-    <aside class="session-sidebar" onClick={handleDocClick}>
+    <aside class="session-sidebar">
       <div class="sidebar-header">
         <span class="sidebar-title">Sessions</span>
         <button class="sidebar-new-btn" title="New session" onClick={async (e) => {
@@ -154,7 +154,7 @@ export default function SessionSidebar() {
                     {(s) => (
                       <div
                         class={`sidebar-session ${state.sessionFile === s.path ? 'active' : ''}`}
-                        onClick={() => openSession(s.path)}
+                        onClick={() => openSession(s)}
                       >
                         <Show when={renamingPath() === s.path}>
                           <input
@@ -183,14 +183,8 @@ export default function SessionSidebar() {
                           <button
                             class="sidebar-menu-btn"
                             title="Options"
-                            onClick={(e) => handleMenuClick(e, s.path)}
+                            onClick={(e) => openMenu(e, s)}
                           >⋯</button>
-                          <Show when={openMenuPath() === s.path}>
-                            <div class="sidebar-dropdown" onClick={(e) => e.stopPropagation()}>
-                              <button class="sidebar-dropdown-item" onClick={() => startRename(s)}>Rename</button>
-                              <button class="sidebar-dropdown-item danger" onClick={() => deleteSession(s.path)}>Delete</button>
-                            </div>
-                          </Show>
                         </div>
                       </div>
                     )}
@@ -204,6 +198,23 @@ export default function SessionSidebar() {
           <div class="sidebar-empty">No sessions</div>
         </Show>
       </div>
+      <Show when={menuState() !== null}>
+        <Portal>
+          <div
+            class="sidebar-dropdown"
+            style={{
+              position: 'fixed',
+              top: `${menuState()!.top}px`,
+              left: `${menuState()!.left}px`,
+              'z-index': '9999',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button class="sidebar-dropdown-item" onClick={() => { startRename(menuState()!.session); setMenuState(null) }}>Rename</button>
+            <button class="sidebar-dropdown-item danger" onClick={() => { deleteSession(menuState()!.sessionPath); setMenuState(null) }}>Delete</button>
+          </div>
+        </Portal>
+      </Show>
     </aside>
   )
 }
