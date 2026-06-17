@@ -7,6 +7,7 @@ import Footer from './components/Footer'
 import StatusBar from './components/StatusBar'
 import ModelSelector from './components/ModelSelector'
 import SessionSelector from './components/SessionSelector'
+import SessionSidebar from './components/SessionSidebar'
 
 export default function App() {
   onMount(() => {
@@ -15,26 +16,29 @@ export default function App() {
 
   return (
     <div class="app">
-      <header class="app-header">
-        <div class="header-left">
-          <span class="app-title">pi</span>
-          <Show when={state.sessionName}>
-            <span class="session-name">{state.sessionName}</span>
-          </Show>
-        </div>
-        <div class="header-right">
-          <span class="hint">Enter: submit · Shift+Enter: newline · Ctrl+C: abort · /model /new /compact</span>
-          <span class={`connection-dot ${state.connected ? 'connected' : state.connecting ? 'connecting' : 'disconnected'}`} />
-        </div>
-      </header>
+      <SessionSidebar />
+      <div class="main-content">
+        <header class="app-header">
+          <div class="header-left">
+            <span class="app-title">pi</span>
+            <Show when={state.sessionName}>
+              <span class="session-name">{state.sessionName}</span>
+            </Show>
+          </div>
+          <div class="header-right">
+            <span class="hint">Enter: submit · Shift+Enter: newline · Ctrl+C: abort · /model /new /compact</span>
+            <span class={`connection-dot ${state.connected ? 'connected' : state.connecting ? 'connecting' : 'disconnected'}`} />
+          </div>
+        </header>
 
-      <ChatView />
+        <ChatView />
 
-      <StatusBar />
+        <StatusBar />
 
-      <InputArea />
+        <InputArea />
 
-      <Footer />
+        <Footer />
+      </div>
 
       <Show when={state.notification}>
         {(n) => (
