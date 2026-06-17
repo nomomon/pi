@@ -693,6 +693,36 @@ export async function runRpcMode(runtimeHost: AgentSessionRuntime): Promise<neve
 				return success(id, "delete_session", { wasCurrentSession: isCurrent });
 			}
 
+			case "rename_session": {
+				const { sessionPath, name } = command;
+				if (!name.trim()) {
+					return error(id, "rename_session", "Name cannot be empty");
+				}
+				try {
+					// Read the last line to get a parentId
+					const content = await fsPromises.readFile(sessionPath, "utf8");
+					const lines = content.trim().split("\n").filter(Boolean);
+					let parentId: string | null = null;
+					for (let i = lines.length - 1; i >= 0; i--) {
+						try {
+							const entry = JSON.parse(lines[i]);
+							if (entry.id) { parentId = entry.id; break; }
+						} catch { /* skip */ }
+					}
+					const entry = {
+						type: "session_info",
+						id: crypto.randomUUID().replace(/-/g, "").slice(0, 16),
+						parentId,
+						timestamp: new Date().toISOString(),
+						name: name.trim(),
+					};
+					await fsPromises.appendFile(sessionPath, JSON.stringify(entry) + "\n", "utf8");
+				} catch (err: any) {
+					return error(id, "rename_session", `Failed to rename session: ${err.message}`);
+				}
+				return success(id, "rename_session");
+			}
+
 			default: {
 				const unknownCommand = command as { type: string };
 				return error(id, unknownCommand.type, `Unknown command: ${unknownCommand.type}`);
