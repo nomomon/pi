@@ -34,6 +34,7 @@ export interface AppState {
 	totalTokens: number;
 	inputTokens: number;
 	outputTokens: number;
+	cacheReadTokens: number;
 }
 
 export const [state, setState] = createStore<AppState>({
@@ -59,6 +60,7 @@ export const [state, setState] = createStore<AppState>({
 	totalTokens: 0,
 	inputTokens: 0,
 	outputTokens: 0,
+	cacheReadTokens: 0,
 });
 
 export function applySessionState(s: RpcSessionState) {

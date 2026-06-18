@@ -272,6 +272,7 @@ function handleAgentEvent(event: AgentEvent) {
 					setState("totalTokens", (msg as any).usage.totalTokens);
 					setState("inputTokens", (msg as any).usage.input ?? 0);
 					setState("outputTokens", (msg as any).usage.output ?? 0);
+					setState("cacheReadTokens", (msg as any).usage.cacheRead ?? 0);
 				}
 			}
 			break;

@@ -115,7 +115,7 @@ export default function InputArea() {
   )
 
   const contextFill = createMemo(() => {
-    const used = state.inputTokens
+    const used = state.inputTokens + state.cacheReadTokens
     const max = currentModelConfig()?.contextWindow
     if (!max || used <= 0) return null
     return Math.min(used / max, 1)
@@ -378,7 +378,7 @@ export default function InputArea() {
             }}
             contextFill={contextFill}
             contextArcColor={contextArcColor}
-            inputTokens={state.inputTokens}
+            contextTokens={state.inputTokens + state.cacheReadTokens}
             outputTokens={state.outputTokens}
             currentModelConfig={currentModelConfig()}
           />

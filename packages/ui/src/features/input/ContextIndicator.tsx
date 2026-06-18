@@ -7,7 +7,7 @@ interface Props {
   setShowMenu: Setter<boolean>
   contextFill: Accessor<number | null>
   contextArcColor: Accessor<string>
-  inputTokens: number
+  contextTokens: number
   outputTokens: number
   currentModelConfig: any
 }
@@ -39,14 +39,14 @@ export default function ContextIndicator(props: Props) {
           </div>
           <Show when={props.contextFill() !== null}>
             <div class={styles.ctxPopupTotal}>
-              {props.inputTokens.toLocaleString()} / {(props.currentModelConfig?.contextWindow ?? 0).toLocaleString()} tokens
+              {props.contextTokens.toLocaleString()} / {(props.currentModelConfig?.contextWindow ?? 0).toLocaleString()} tokens
             </div>
           </Show>
           <div class={styles.ctxPopupRows}>
             <div class={styles.ctxPopupRow}>
               <span class={styles.ctxPopupDot} style={{ background: 'var(--accent)' }} />
-              <span class={styles.ctxPopupLabel}>Input</span>
-              <span class={styles.ctxPopupVal}>{props.inputTokens.toLocaleString()}</span>
+              <span class={styles.ctxPopupLabel}>Context</span>
+              <span class={styles.ctxPopupVal}>{props.contextTokens.toLocaleString()}</span>
             </div>
             <div class={styles.ctxPopupRow}>
               <span class={styles.ctxPopupDot} style={{ background: 'var(--text-dim)' }} />
