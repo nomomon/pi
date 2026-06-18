@@ -1,6 +1,6 @@
 /* ===== Session Sidebar ===== */
 .sessionSidebar {
-    width: var(--size-xs);
+    width: var(--size-md);
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -14,7 +14,7 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--space-2) var(--space-3) var(--space-2);
-    border-bottom: var(--border-base) solid var(--border, #333);
+    border-bottom: var(--border-base) solid var(--border);
     flex-shrink: 0;
 }
 
@@ -23,13 +23,13 @@
     font-weight: var(--weight-semi);
     text-transform: uppercase;
     letter-spacing: var(--tracking-wide);
-    color: var(--text-muted, #666);
+    color: var(--text-muted);
 }
 
 .sidebarNewBtn {
     background: none;
-    border: var(--border-base) solid var(--border, #333);
-    color: var(--text-muted, #666);
+    border: var(--border-base) solid var(--border);
+    color: var(--text-muted);
     cursor: pointer;
     padding: var(--space-px) calc(var(--space-3) / 2);
     border-radius: var(--radius-xs);
@@ -38,8 +38,8 @@
 }
 
 .sidebarNewBtn:hover {
-    border-color: var(--accent, #4a9eff);
-    color: var(--accent, #4a9eff);
+    border-color: var(--accent);
+    color: var(--accent);
 }
 
 .sidebarList {
@@ -61,13 +61,13 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: var(--text-muted, #666);
+    color: var(--text-muted);
     font-size: var(--text-xs);
     text-align: left;
 }
 
 .sidebarGroupHeader:hover {
-    background: var(--bg-hover, #252525);
+    background: var(--bg-hover);
 }
 
 .sidebarGroupArrow {
@@ -85,8 +85,8 @@
 
 .sidebarGroupCount {
     font-size: var(--text-xs);
-    color: var(--text-muted, #555);
-    background: var(--bg-hover, #252525);
+    color: var(--text-muted);
+    background: var(--bg-hover);
     padding: 0 var(--space-1);
     border-radius: var(--radius-sm);
     flex-shrink: 0;
@@ -107,19 +107,19 @@
 }
 
 .sidebarSession:hover {
-    background: var(--bg-hover, #252525);
+    background: var(--bg-hover);
 }
 
 .active {}
 
 .sidebarSession.active {
-    border-left-color: var(--accent, #4a9eff);
-    background: var(--bg-hover, #252525);
+    border-left-color: var(--accent);
+    background: var(--bg-hover);
 }
 
 .sidebarSessionName {
     font-size: var(--text-sm);
-    color: var(--text, #ccc);
+    color: var(--text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -128,7 +128,7 @@
 
 .sidebarSessionPreview {
     font-size: var(--text-xs);
-    color: var(--text-muted, #666);
+    color: var(--text-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -145,7 +145,7 @@
 .sidebarMenuBtn {
     background: none;
     border: none;
-    color: var(--text-muted, #666);
+    color: var(--text-muted);
     cursor: pointer;
     padding: calc(var(--space-1) / 2) var(--space-1);
     font-size: var(--text-base);
@@ -160,13 +160,13 @@
 }
 
 .sidebarMenuBtn:hover {
-    background: var(--bg-hover, #333);
-    color: var(--text, #ccc);
+    background: var(--bg-hover);
+    color: var(--text);
 }
 
 .sidebarDropdown {
-    background: var(--bg-secondary, #1e1e1e);
-    border: var(--border-base) solid var(--border, #333);
+    background: var(--bg);
+    border: var(--border-base) solid var(--border);
     border-radius: var(--radius-xs);
     padding: calc(var(--space-1) / 2) 0;
     min-width: 100px;
@@ -179,14 +179,14 @@
     padding: calc(var(--space-3) / 2) var(--space-3);
     background: none;
     border: none;
-    color: var(--text, #ccc);
+    color: var(--text);
     cursor: pointer;
     font-size: var(--text-sm);
     text-align: left;
 }
 
 .sidebarDropdownItem:hover {
-    background: var(--bg-hover, #2a2a2a);
+    background: var(--bg-hover);
 }
 
 .danger {}
@@ -201,9 +201,9 @@
 
 .sidebarRenameInput {
     width: calc(100% - var(--space-6));
-    background: var(--bg, #111);
-    border: var(--border-base) solid var(--accent, #4a9eff);
-    color: var(--text, #ccc);
+    background: var(--bg);
+    border: var(--border-base) solid var(--accent);
+    color: var(--text);
     font-size: var(--text-sm);
     padding: calc(var(--space-1) / 2) var(--space-1);
     border-radius: var(--radius-xs);
@@ -213,5 +213,5 @@
 .sidebarEmpty {
     padding: var(--space-3) var(--space-3);
     font-size: var(--text-sm);
-    color: var(--text-muted, #555);
+    color: var(--text-muted);
 }
