@@ -4,6 +4,14 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends bash ca-certificates git ripgrep \
   && rm -rf /var/lib/apt/lists/*
 
+# Create a non-root user that the pi agent runs as.
+# /home/pi  — agent config and sessions (~/.pi)
+# /workspace — the working directory pi can read/write
+RUN groupadd -g 1001 pi \
+  && useradd -m -u 1001 -g 1001 -s /bin/bash pi \
+  && mkdir -p /workspace \
+  && chown pi:pi /workspace
+
 WORKDIR /app
 
 # Install all workspace dependencies
@@ -41,10 +49,15 @@ COPY packages/ui/index.html packages/ui/
 COPY packages/ui/vite.config.ts packages/ui/
 COPY packages/ui/tsconfig*.json packages/ui/
 COPY packages/ui/server.ts packages/ui/
-RUN npm run build --workspace=packages/ui
+
+RUN npm run build --workspace=packages/ui \
+  # Allow pi user to read the built app and run server.ts
+  && chown -R pi:pi /app/packages/ui/dist \
+  && chown pi:pi /app/packages/ui/server.ts
 
 WORKDIR /app/packages/ui
+USER pi
 EXPOSE 3030
-ENV NODE_ENV=production CWD=/workspace
+ENV NODE_ENV=production CWD=/workspace HOME=/home/pi
 
 CMD ["node", "--import", "tsx/esm", "server.ts"]

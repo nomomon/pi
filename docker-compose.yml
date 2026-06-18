@@ -8,8 +8,9 @@ services:
     environment:
       - UI_TOKEN
     volumes:
-      - .:/workspace
-      - pi-agent-home:/root/.pi/agent
+      - pi-workspace:/workspace
+      - pi-agent-home:/home/pi/.pi
 
 volumes:
+  pi-workspace:
   pi-agent-home:
