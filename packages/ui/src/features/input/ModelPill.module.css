@@ -3,7 +3,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
-    height: 32px;
+    height: var(--size-icon-xl);
     padding: 0 var(--space-3);
     background: var(--bg-active);
     border: none;
@@ -36,7 +36,7 @@
     border-radius: var(--radius-md);
     box-shadow: 0 var(--space-1) var(--space-6) rgba(0,0,0,0.5), 0 var(--border-base) var(--space-1) rgba(0,0,0,0.3);
     padding: var(--space-1);
-    max-height: 360px;
+    max-height: var(--size-md);
     overflow-y: auto;
     position: absolute;
     bottom: calc(100% + var(--space-2));

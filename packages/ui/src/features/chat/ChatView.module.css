@@ -9,7 +9,7 @@
 
 .chatColumn {
     width: 100%;
-    max-width: 720px;
+    max-width: var(--max-w-content);
     display: flex;
     flex-direction: column;
     gap: 0;

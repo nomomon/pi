@@ -23,7 +23,7 @@
     position: absolute;
     bottom: calc(100% + var(--space-2));
     right: 0;
-    width: 220px;
+    width: var(--size-xs);
     background: var(--bg-surface);
     border: var(--border-base) solid var(--border);
     border-radius: var(--radius-md);

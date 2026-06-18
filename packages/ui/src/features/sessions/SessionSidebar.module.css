@@ -1,6 +1,6 @@
 /* ===== Session Sidebar ===== */
 .sessionSidebar {
-    width: 220px;
+    width: var(--size-xs);
     flex-shrink: 0;
     display: flex;
     flex-direction: column;

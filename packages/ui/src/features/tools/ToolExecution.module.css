@@ -39,7 +39,7 @@
 .toolStatusIcon {
     display: flex;
     align-items: center;
-    width: 16px;
+    width: var(--size-icon-sm);
     flex-shrink: 0;
 }
 

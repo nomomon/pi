@@ -8,7 +8,7 @@
 .slashSuggestions {
     border-bottom: var(--border-base) solid var(--border);
     background: var(--bg-surface);
-    max-height: 240px;
+    max-height: var(--size-sm);
     overflow-y: auto;
 }
 

@@ -97,4 +97,34 @@
     --screen-md: 768px;
     --screen-lg: 1024px;
     --screen-xl: 1280px;
+
+    /* ── component / panel sizes ─────────────── */
+    --size-xs:  160px;   /* narrow dropdowns, small sidebars */
+    --size-sm:  240px;   /* compact panels, small modals */
+    --size-md:  320px;   /* default card width, medium modals */
+    --size-lg:  480px;   /* wide cards, forms */
+    --size-xl:  640px;   /* large modals, content columns */
+    --size-2xl: 768px;   /* wide content areas */
+    --size-3xl: 1024px;  /* full layout containers */
+
+    /* ── icon / control sizes ────────────────── */
+    --size-icon-xs: 12px;
+    --size-icon-sm: 16px;
+    --size-icon-md: 20px;
+    --size-icon-lg: 24px;
+    --size-icon-xl: 32px;
+
+    --size-avatar-sm: 24px;
+    --size-avatar-md: 32px;
+    --size-avatar-lg: 40px;
+    --size-avatar-xl: 48px;
+
+    --size-control-sm: 28px;
+    --size-control-md: 36px;
+    --size-control-lg: 44px;
+
+    /* ── content max-widths ───────────────────── */
+    --max-w-prose:   65ch;    /* readable text column */
+    --max-w-content: 720px;   /* answer / chat column */
+    --max-w-layout:  1280px;  /* full page container */
 }

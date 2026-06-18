@@ -13,7 +13,7 @@
     background: var(--bg-surface);
     border: var(--border-base) solid var(--border);
     border-radius: var(--radius-sm);
-    width: 520px;
+    width: var(--size-lg);
     max-width: 95vw;
     max-height: 70vh;
     display: flex;
