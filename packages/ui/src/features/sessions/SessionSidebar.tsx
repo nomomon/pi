@@ -1,4 +1,5 @@
 import { createSignal, createEffect, For, Show, onMount, onCleanup } from 'solid-js'
+import { ChevronDown, ChevronRight, MoreHorizontal, SquarePen } from 'lucide-solid'
 import { state, showNotification } from '@/core/store'
 import { sendCommand, reloadSession, openInWorkspace } from '@/core/ws'
 import styles from './SessionSidebar.module.css'
@@ -110,7 +111,7 @@ export default function SessionSidebar() {
 
   async function deleteSession(sessionPath: string) {
     setMenuState(null)
-    if (!confirm('Delete this session?')) return
+    if (!confirm(`Delete "${sessionPath.split('/').pop()?.replace('.json', '') ?? 'this session'}"?`)) return
     const wasCurrent = state.sessionFile === sessionPath
     try {
       await sendCommand({ type: 'delete_session', sessionPath })
@@ -141,14 +142,14 @@ export default function SessionSidebar() {
           await sendCommand({ type: 'new_session' })
           await reloadSession()
           await loadSessions()
-        }}>+</button>
+        }}><SquarePen size={14} /></button>
       </div>
       <div class={styles.sidebarList}>
         <For each={groups()}>
           {(group) => (
             <div class={styles.sidebarGroup}>
               <button class={styles.sidebarGroupHeader} onClick={() => toggleGroup(group.cwd)}>
-                <span class={styles.sidebarGroupArrow}>{group.collapsed ? '▶' : '▼'}</span>
+                <span class={styles.sidebarGroupArrow}>{group.collapsed ? <ChevronRight size={12} /> : <ChevronDown size={12} />}</span>
                 <span class={styles.sidebarGroupName} title={group.cwd}>{shortPath(group.cwd)}</span>
                 <span class={styles.sidebarGroupCount}>{group.sessions.length}</span>
               </button>
@@ -188,7 +189,7 @@ export default function SessionSidebar() {
                             class={styles.sidebarMenuBtn}
                             title="Options"
                             onClick={(e) => openMenu(e, s)}
-                          >⋯</button>
+                          ><MoreHorizontal size={14} /></button>
                         </div>
                       </div>
                     )}
@@ -199,7 +200,7 @@ export default function SessionSidebar() {
           )}
         </For>
         <Show when={groups().length === 0}>
-          <div class={styles.sidebarEmpty}>No sessions</div>
+          <div class={styles.sidebarEmpty}>No sessions yet — press <SquarePen size={11} style={{ display: 'inline-block', 'vertical-align': 'middle' }} /> to start</div>
         </Show>
       </div>
       <Show when={menuState() !== null}>
@@ -209,7 +210,7 @@ export default function SessionSidebar() {
             position: 'fixed',
             top: `${menuState()!.top}px`,
             left: `${menuState()!.left}px`,
-            'z-index': '9999',
+            'z-index': 'var(--z-overlay)',
           }}
           onClick={(e) => e.stopPropagation()}
         >
