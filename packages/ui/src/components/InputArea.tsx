@@ -30,16 +30,18 @@ export default function InputArea() {
   const [selectedSuggestion, setSelectedSuggestion] = createSignal(-1)
   const [showModelMenu, setShowModelMenu] = createSignal(false)
   const [showThinkingMenu, setShowThinkingMenu] = createSignal(false)
+  const [showContextMenu, setShowContextMenu] = createSignal(false)
   const [modelsLoading, setModelsLoading] = createSignal(false)
   const [modelSearch, setModelSearch] = createSignal('')
 
   createEffect(() => {
-    const either = showModelMenu() || showThinkingMenu()
-    if (either) {
+    const any = showModelMenu() || showThinkingMenu() || showContextMenu()
+    if (any) {
       const handler = (e: MouseEvent) => {
         if (cardRef && !cardRef.contains(e.target as Node)) {
           setShowModelMenu(false)
           setShowThinkingMenu(false)
+          setShowContextMenu(false)
         }
       }
       document.addEventListener('mousedown', handler)
@@ -110,7 +112,7 @@ export default function InputArea() {
   )
 
   const contextFill = createMemo(() => {
-    const used = state.totalTokens
+    const used = state.inputTokens
     const max = currentModelConfig()?.contextWindow
     if (!max || used <= 0) return null
     return Math.min(used / max, 1)
@@ -118,10 +120,10 @@ export default function InputArea() {
 
   const contextArcColor = createMemo(() => {
     const p = contextFill()
-    if (p === null) return 'var(--text-dim)'
+    if (p === null) return 'var(--border)'
     if (p >= 0.9) return 'var(--red)'
     if (p >= 0.7) return 'var(--yellow)'
-    return 'var(--text-dim)'
+    return 'var(--accent)'
   })
 
   function applySuggestion(cmd: RpcSlashCommand) {
@@ -441,25 +443,60 @@ export default function InputArea() {
 
           <div class="input-toolbar-spacer" />
 
-          <Show when={contextFill() !== null}>
-            <div
-              class="ctx-indicator"
-              title={`Context: ${Math.round(contextFill()! * 100)}% (${state.totalTokens.toLocaleString()} tokens)`}
+          <div class="ctx-indicator-wrap">
+            <Show when={showContextMenu()}>
+              <div class="ctx-popup">
+                <button class="ctx-popup-close" onMouseDown={(e) => { e.preventDefault(); setShowContextMenu(false) }}>✕</button>
+                <div class="ctx-popup-bar-wrap">
+                  <div class="ctx-popup-bar">
+                    <div class="ctx-popup-bar-fill" style={{ width: `${Math.round((contextFill() ?? 0) * 100)}%`, background: contextArcColor() }} />
+                  </div>
+                  <span class="ctx-popup-pct">{contextFill() !== null ? `${Math.round(contextFill()! * 100)}%` : '—'}</span>
+                </div>
+                <Show when={contextFill() !== null}>
+                  <div class="ctx-popup-total">{state.inputTokens.toLocaleString()} / {(currentModelConfig()?.contextWindow ?? 0).toLocaleString()} tokens</div>
+                </Show>
+                <div class="ctx-popup-rows">
+                  <div class="ctx-popup-row">
+                    <span class="ctx-popup-dot" style={{ background: 'var(--accent)' }} />
+                    <span class="ctx-popup-label">Input</span>
+                    <span class="ctx-popup-val">{state.inputTokens.toLocaleString()}</span>
+                  </div>
+                  <div class="ctx-popup-row">
+                    <span class="ctx-popup-dot" style={{ background: 'var(--text-dim)' }} />
+                    <span class="ctx-popup-label">Output</span>
+                    <span class="ctx-popup-val">{state.outputTokens.toLocaleString()}</span>
+                  </div>
+                </div>
+                <Show when={currentModelConfig()}>
+                  <div class="ctx-popup-footer">
+                    <span>{currentModelConfig()!.name ?? currentModelConfig()!.id}</span>
+                    <span>{((currentModelConfig()!.contextWindow ?? 0) / 1000).toFixed(0)}K ctx</span>
+                  </div>
+                </Show>
+              </div>
+            </Show>
+            <button
+              class={`ctx-indicator ${showContextMenu() ? 'open' : ''}`}
+              onMouseDown={(e) => { e.preventDefault(); setShowModelMenu(false); setShowThinkingMenu(false); setShowContextMenu(v => !v) }}
+              title="Context window usage"
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <circle cx="9" cy="9" r="7" stroke="var(--border)" stroke-width="2" />
-                <circle
-                  cx="9" cy="9" r="7"
-                  stroke={contextArcColor()}
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-dasharray="43.98"
-                  stroke-dashoffset={43.98 * (1 - contextFill()!)}
-                  transform="rotate(-90 9 9)"
-                />
+                <Show when={contextFill() !== null}>
+                  <circle
+                    cx="9" cy="9" r="7"
+                    stroke={contextArcColor()}
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-dasharray="43.98"
+                    stroke-dashoffset={43.98 * (1 - contextFill()!)}
+                    transform="rotate(-90 9 9)"
+                  />
+                </Show>
               </svg>
-            </div>
-          </Show>
+            </button>
+          </div>
 
           <button
             class={`input-model-pill ${showModelMenu() ? 'open' : ''}`}

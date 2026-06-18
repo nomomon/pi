@@ -32,6 +32,8 @@ export interface AppState {
 	notification: { text: string; kind: "info" | "warning" | "error" } | null;
 	pendingResponses: Record<string, { resolve: (v: any) => void; reject: (e: any) => void }>;
 	totalTokens: number;
+	inputTokens: number;
+	outputTokens: number;
 }
 
 export const [state, setState] = createStore<AppState>({
@@ -55,6 +57,8 @@ export const [state, setState] = createStore<AppState>({
 	notification: null,
 	pendingResponses: {},
 	totalTokens: 0,
+	inputTokens: 0,
+	outputTokens: 0,
 });
 
 export function applySessionState(s: RpcSessionState) {

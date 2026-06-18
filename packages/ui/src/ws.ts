@@ -267,9 +267,11 @@ function handleAgentEvent(event: AgentEvent) {
 					e.isPartial = false;
 				});
 				setState("streamingEntryId", null);
-				// Update total tokens
+				// Update token counts
 				if ((msg as any).usage?.totalTokens) {
 					setState("totalTokens", (msg as any).usage.totalTokens);
+					setState("inputTokens", (msg as any).usage.input ?? 0);
+					setState("outputTokens", (msg as any).usage.output ?? 0);
 				}
 			}
 			break;
