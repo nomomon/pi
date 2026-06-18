@@ -2,7 +2,7 @@ import { For, Show, createEffect, createMemo, createSignal, Switch, Match } from
 import { state } from '../../store'
 import type { ChatEntry } from '../../types'
 import AssistantMessage from './AssistantMessage'
-import StepGroup from '../../components/ToolCallGroup'
+import StepGroup from '../tools/ToolCallGroup'
 import styles from './ChatView.module.css'
 
 type GroupedEntry =
