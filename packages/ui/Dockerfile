@@ -9,8 +9,8 @@ RUN apt-get update \
 # /workspace — the working directory pi can read/write
 RUN groupadd -g 1001 pi \
   && useradd -m -u 1001 -g 1001 -s /bin/bash pi \
-  && mkdir -p /workspace \
-  && chown pi:pi /workspace
+  && mkdir -p /workspace /home/pi/.pi/agent/sessions \
+  && chown -R pi:pi /workspace /home/pi
 
 WORKDIR /app
 
