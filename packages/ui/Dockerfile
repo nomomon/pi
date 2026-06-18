@@ -8,6 +8,7 @@ WORKDIR /app
 
 # Install all workspace dependencies
 COPY package*.json ./
+COPY tsconfig*.json ./
 COPY packages/tui/package*.json packages/tui/
 COPY packages/ai/package*.json packages/ai/
 COPY packages/agent/package*.json packages/agent/
