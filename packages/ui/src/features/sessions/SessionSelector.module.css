@@ -63,14 +63,6 @@
     overflow-y: auto;
 }
 
-.overlayList::-webkit-scrollbar {
-    width: var(--space-1);
-}
-
-.overlayList::-webkit-scrollbar-thumb {
-    background: var(--border);
-}
-
 .overlayLoading,
 .overlayEmpty {
     padding: var(--space-5);

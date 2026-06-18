@@ -15,23 +15,6 @@
     gap: 0;
 }
 
-.chatView::-webkit-scrollbar {
-    width: var(--size-scrollbar);
-}
-
-.chatView::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.chatView::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: var(--radius-xs);
-}
-
-.chatView::-webkit-scrollbar-thumb:hover {
-    background: var(--text-dim);
-}
-
 .chatEntry {
     border-radius: var(--radius-xs);
     flex-shrink: 0;

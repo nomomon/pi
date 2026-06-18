@@ -30,6 +30,34 @@
     --font-serif: Georgia, 'Times New Roman', serif;
 }
 
+/* ── global scrollbar ───────────────────────────────────────── */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scrollbar-thumb) transparent;
+}
+
+::-webkit-scrollbar {
+    width: var(--size-scrollbar);
+    height: var(--size-scrollbar);
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-scrollbar-thumb);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
 html,
 body,
 #root {

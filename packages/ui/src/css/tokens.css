@@ -139,7 +139,9 @@
     --shadow-focus: 0 0 0 2px var(--accent);
 
     /* ── scrollbar ────────────────────────────── */
-    --size-scrollbar: 5px;
+    --size-scrollbar:              5px;
+    --color-scrollbar-thumb:       rgba(255, 255, 255, 0.12);
+    --color-scrollbar-thumb-hover: rgba(255, 255, 255, 0.28);
 
     /* ── semantic colors ──────────────────────── */
     --color-overlay:       rgba(0, 0, 0, 0.7);

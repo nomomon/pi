@@ -45,15 +45,6 @@
     z-index: var(--z-dropdown);
 }
 
-.inputModelDropdown::-webkit-scrollbar {
-    width: var(--space-1);
-}
-
-.inputModelDropdown::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: var(--radius-xs);
-}
-
 /* Model search */
 .imdSearchWrap {
     padding: calc(var(--space-3) / 2) var(--space-2) var(--space-1);
