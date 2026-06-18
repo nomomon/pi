@@ -12,29 +12,11 @@ let pendingSessionPath: string | null = null;
 // know to updateMessage instead of addMessage when the tool finishes.
 const streamingWidgetIds = new Set<string>();
 
-function extractStreamingSvg(argsStr: string): string | null {
-	const svgStart = argsStr.indexOf("<svg");
-	if (svgStart === -1) return null;
-	const raw = argsStr.slice(svgStart);
-	// Don't render until viewBox is present (ensures correct dimensions/styling)
-	if (!raw.includes("viewBox")) return null;
-	// Don't render until we have at least one complete closing tag
-	const closeIdx = raw.lastIndexOf("</svg>");
-	if (closeIdx === -1) return null;
-	const svgRaw = raw.slice(0, closeIdx + 6);
-	// Unescape JSON string encoding
-	return svgRaw
-		.replace(/\\"/g, '"')
-		.replace(/\\n/g, "\n")
-		.replace(/\\r/g, "\r")
-		.replace(/\\t/g, "\t")
-		.replace(/\\\\/g, "\\");
-}
-
-function extractJsonStringField(argsStr: string, field: string): string | null {
-	const re = new RegExp(`"${field}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`);
-	const m = argsStr.match(re);
-	return m ? m[1] : null;
+function getStreamingSvg(widgetCode: string): string | null {
+	if (!widgetCode.trimStart().startsWith("<svg")) return null;
+	// Don't render until viewBox is present (ensures correct dimensions/CSS vars)
+	if (!widgetCode.includes("viewBox")) return null;
+	return widgetCode;
 }
 
 function genId() {
@@ -279,18 +261,17 @@ function handleAgentEvent(event: AgentEvent) {
 				// Stream SVG widgets as the LLM generates the tool call arguments
 				for (const tc of toolCalls) {
 					if (tc.name !== "visualize_show_widget") continue;
-					const argsStr = typeof tc.arguments === "string" ? tc.arguments : JSON.stringify(tc.arguments ?? {});
-					const partialSvg = extractStreamingSvg(argsStr);
+					const args = tc.arguments as any;
+					const partialSvg = getStreamingSvg(args?.widget_code ?? "");
 					if (!partialSvg) continue;
 					const widgetId = `widget_${tc.id}`;
 					if (!streamingWidgetIds.has(tc.id)) {
 						streamingWidgetIds.add(tc.id);
-						const rawTitle = extractJsonStringField(argsStr, "title");
 						addMessage({
 							id: widgetId,
 							type: "widget",
 							timestamp: Date.now(),
-							widgetTitle: rawTitle ?? "",
+							widgetTitle: args?.title ?? "",
 							widgetCode: partialSvg,
 							widgetIsStreaming: true,
 						});
