@@ -341,7 +341,7 @@ function handleAgentEvent(event: AgentEvent) {
 				return JSON.stringify(r);
 			};
 
-			if (toolName === "visualize:show_widget" && !isError) {
+			if (toolName === "visualize_show_widget" && !isError) {
 				try {
 					const data = JSON.parse(getResultText(result));
 					if (data.widget_code) {
@@ -472,7 +472,7 @@ function processHistoricalMessage(msg: any) {
 
 		if (!msg.isError) {
 			const resultText = msg.content?.map((c: any) => c.text).join("") ?? "";
-			if (msg.toolName === "visualize:show_widget") {
+			if (msg.toolName === "visualize_show_widget") {
 				try {
 					const data = JSON.parse(resultText);
 					if (data.widget_code) {

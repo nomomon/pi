@@ -75,12 +75,12 @@ EXAMPLE HTML (interactive button):
 
 export default function registerVisualize(pi: ExtensionAPI) {
   pi.registerTool({
-    name: "visualize:read_me",
+    name: "visualize_read_me",
     label: "Visualize Read Me",
-    description: "Returns the design system context required before calling visualize:show_widget. Must be called before the first show_widget call. Do not narrate this call to the user.",
+    description: "Returns the design system context required before calling visualize_show_widget. Must be called before the first show_widget call. Do not narrate this call to the user.",
     promptSnippet: "Load design system context before rendering widgets",
     promptGuidelines: [
-      "Always call visualize:read_me before your first visualize:show_widget call.",
+      "Always call visualize_read_me before your first visualize_show_widget call.",
       "Do not mention or narrate this call — it is an internal setup step.",
     ],
     parameters: Type.Object({
@@ -99,12 +99,12 @@ export default function registerVisualize(pi: ExtensionAPI) {
   })
 
   pi.registerTool({
-    name: "visualize:show_widget",
+    name: "visualize_show_widget",
     label: "Show Widget",
     description: "Renders SVG graphics, diagrams, charts, or interactive HTML widgets inline in the chat. Starts with <svg → SVG mode; anything else → HTML mode.",
     promptSnippet: "Render SVG or HTML widget inline in the chat",
     promptGuidelines: [
-      "Always call visualize:read_me before your first visualize:show_widget.",
+      "Always call visualize_read_me before your first visualize_show_widget.",
       "title must be snake_case, no spaces — used as download filename.",
       "loading_messages: 1–4 short phrases shown while rendering. Be playful (puns/alliteration) unless the topic is serious.",
     ],
