@@ -1207,6 +1207,15 @@ body {
     color: var(--text);
 }
 
+.input-thinking-pill.reasoning {
+    color: var(--purple);
+}
+
+.input-thinking-pill.reasoning:hover,
+.input-thinking-pill.reasoning.open {
+    color: var(--purple);
+}
+
 .pill-thinking-label {
     color: inherit;
     font-size: 13px;

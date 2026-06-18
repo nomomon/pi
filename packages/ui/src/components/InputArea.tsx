@@ -76,6 +76,31 @@ export default function InputArea() {
     )
   })
 
+  const currentModelConfig = createMemo(() =>
+    state.availableModels.find((m: any) => m.id === state.model?.id) ?? null
+  )
+
+  const supportedThinkingLevels = createMemo(() => {
+    const m = currentModelConfig()
+    if (!m) return THINKING_LEVELS // model list not loaded yet — show all
+    if (!m.reasoning) return THINKING_LEVELS // non-reasoning model — pill will be hidden
+    const map: Record<string, string | null> = m.thinkingLevelMap ?? {}
+    return THINKING_LEVELS.filter(t => {
+      if (t.value === 'auto' || t.value === 'none') return true
+      return !(t.value in map && map[t.value] === null)
+    })
+  })
+
+  const modelSupportsReasoning = createMemo(() => {
+    const m = currentModelConfig()
+    if (!m) return true // unknown — show pill by default
+    return !!m.reasoning
+  })
+
+  const isReasoningActive = createMemo(() =>
+    modelSupportsReasoning() && state.thinkingLevel !== 'none'
+  )
+
   function applySuggestion(cmd: RpcSlashCommand) {
     const needsArgs = ['compact', 'name', 'thinking'].includes(cmd.name)
     setValue(`/${cmd.name}${needsArgs ? ' ' : ''}`)
@@ -370,7 +395,7 @@ export default function InputArea() {
 
           <Show when={showThinkingMenu()}>
             <div class="input-thinking-dropdown">
-              <For each={THINKING_LEVELS}>
+              <For each={supportedThinkingLevels()}>
                 {(t) => (
                   <div
                     class={`imd-row ${state.thinkingLevel === t.value ? 'active' : ''}`}
@@ -411,23 +436,25 @@ export default function InputArea() {
             <span class="pill-chevron">▾</span>
           </button>
 
-          <button
-            class={`input-thinking-pill ${showThinkingMenu() ? 'open' : ''}`}
-            onMouseDown={(e) => {
-              e.preventDefault()
-              if (showThinkingMenu()) {
-                setShowThinkingMenu(false)
-              } else {
-                setShowModelMenu(false)
-                setModelSearch('')
-                setShowThinkingMenu(true)
-              }
-            }}
-            title="Set thinking level"
-          >
-            <span class="pill-thinking-label">{thinkingDisplay()}</span>
-            <span class="pill-chevron">▾</span>
-          </button>
+          <Show when={modelSupportsReasoning()}>
+            <button
+              class={`input-thinking-pill ${showThinkingMenu() ? 'open' : ''} ${isReasoningActive() ? 'reasoning' : ''}`}
+              onMouseDown={(e) => {
+                e.preventDefault()
+                if (showThinkingMenu()) {
+                  setShowThinkingMenu(false)
+                } else {
+                  setShowModelMenu(false)
+                  setModelSearch('')
+                  setShowThinkingMenu(true)
+                }
+              }}
+              title="Set thinking level"
+            >
+              <span class="pill-thinking-label">{thinkingDisplay()}</span>
+              <span class="pill-chevron">▾</span>
+            </button>
+          </Show>
 
           <button
             class={`input-send-btn ${state.isStreaming ? 'aborting' : ''}`}
