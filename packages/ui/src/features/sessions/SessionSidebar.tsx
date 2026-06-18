@@ -1,6 +1,7 @@
 import { createSignal, createEffect, For, Show, onMount, onCleanup } from 'solid-js'
-import { state, showNotification } from '../store'
-import { sendCommand, reloadSession, openInWorkspace } from '../ws'
+import { state, showNotification } from '../../store'
+import { sendCommand, reloadSession, openInWorkspace } from '../../ws'
+import styles from './SessionSidebar.module.css'
 
 interface SessionItem {
   path: string
@@ -61,7 +62,11 @@ export default function SessionSidebar() {
 
   onMount(() => {
     loadSessions()
-    const close = () => setMenuState(null)
+    const close = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (target.closest('.' + styles.sidebarMenuBtn) || target.closest('.' + styles.sidebarDropdown)) return
+      setMenuState(null)
+    }
     document.addEventListener('click', close)
     onCleanup(() => document.removeEventListener('click', close))
   })
@@ -128,36 +133,36 @@ export default function SessionSidebar() {
   }
 
   return (
-    <aside class="session-sidebar">
-      <div class="sidebar-header">
-        <span class="sidebar-title">Sessions</span>
-        <button class="sidebar-new-btn" title="New session" onClick={async (e) => {
+    <aside class={styles.sessionSidebar}>
+      <div class={styles.sidebarHeader}>
+        <span class={styles.sidebarTitle}>Sessions</span>
+        <button class={styles.sidebarNewBtn} title="New session" onClick={async (e) => {
           e.stopPropagation()
           await sendCommand({ type: 'new_session' })
           await reloadSession()
           await loadSessions()
         }}>+</button>
       </div>
-      <div class="sidebar-list">
+      <div class={styles.sidebarList}>
         <For each={groups()}>
           {(group) => (
-            <div class="sidebar-group">
-              <button class="sidebar-group-header" onClick={() => toggleGroup(group.cwd)}>
-                <span class="sidebar-group-arrow">{group.collapsed ? '▶' : '▼'}</span>
-                <span class="sidebar-group-name" title={group.cwd}>{shortPath(group.cwd)}</span>
-                <span class="sidebar-group-count">{group.sessions.length}</span>
+            <div class={styles.sidebarGroup}>
+              <button class={styles.sidebarGroupHeader} onClick={() => toggleGroup(group.cwd)}>
+                <span class={styles.sidebarGroupArrow}>{group.collapsed ? '▶' : '▼'}</span>
+                <span class={styles.sidebarGroupName} title={group.cwd}>{shortPath(group.cwd)}</span>
+                <span class={styles.sidebarGroupCount}>{group.sessions.length}</span>
               </button>
               <Show when={!group.collapsed}>
-                <div class="sidebar-group-sessions">
+                <div class={styles.sidebarGroupSessions}>
                   <For each={group.sessions}>
                     {(s) => (
                       <div
-                        class={`sidebar-session ${state.sessionFile === s.path ? 'active' : ''}`}
+                        class={`${styles.sidebarSession}${state.sessionFile === s.path ? ' ' + styles.active : ''}`}
                         onClick={() => openSession(s)}
                       >
                         <Show when={renamingPath() === s.path}>
                           <input
-                            class="sidebar-rename-input"
+                            class={styles.sidebarRenameInput}
                             value={renameValue()}
                             onInput={(e) => setRenameValue(e.currentTarget.value)}
                             onKeyDown={(e) => {
@@ -171,16 +176,16 @@ export default function SessionSidebar() {
                           />
                         </Show>
                         <Show when={renamingPath() !== s.path}>
-                          <span class="sidebar-session-name">
-                            {s.name ?? s.id.slice(0, 8)}
+                          <span class={styles.sidebarSessionName}>
+                            {s.name ?? s.firstMessage?.slice(0, 50) ?? s.id.slice(0, 8)}
                           </span>
-                          <Show when={s.firstMessage}>
-                            <span class="sidebar-session-preview">{s.firstMessage.slice(0, 40)}</span>
+                          <Show when={s.name && s.firstMessage}>
+                            <span class={styles.sidebarSessionPreview}>{s.firstMessage.slice(0, 40)}</span>
                           </Show>
                         </Show>
-                        <div class="sidebar-session-menu-wrap">
+                        <div class={styles.sidebarSessionMenuWrap}>
                           <button
-                            class="sidebar-menu-btn"
+                            class={styles.sidebarMenuBtn}
                             title="Options"
                             onClick={(e) => openMenu(e, s)}
                           >⋯</button>
@@ -194,12 +199,12 @@ export default function SessionSidebar() {
           )}
         </For>
         <Show when={groups().length === 0}>
-          <div class="sidebar-empty">No sessions</div>
+          <div class={styles.sidebarEmpty}>No sessions</div>
         </Show>
       </div>
       <Show when={menuState() !== null}>
         <div
-          class="sidebar-dropdown"
+          class={styles.sidebarDropdown}
           style={{
             position: 'fixed',
             top: `${menuState()!.top}px`,
@@ -208,8 +213,8 @@ export default function SessionSidebar() {
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          <button class="sidebar-dropdown-item" onClick={() => { startRename(menuState()!.session); setMenuState(null) }}>Rename</button>
-          <button class="sidebar-dropdown-item danger" onClick={() => { deleteSession(menuState()!.sessionPath); setMenuState(null) }}>Delete</button>
+          <button class={styles.sidebarDropdownItem} onClick={() => { startRename(menuState()!.session); setMenuState(null) }}>Rename</button>
+          <button class={`${styles.sidebarDropdownItem} ${styles.danger}`} onClick={() => { deleteSession(menuState()!.sessionPath); setMenuState(null) }}>Delete</button>
         </div>
       </Show>
     </aside>

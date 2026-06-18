@@ -1,0 +1,175 @@
+.assistantMessage {
+    /* no explicit rules in index.css for .assistant-message itself */
+}
+
+.usageLine {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 6px;
+}
+
+.usageModel {
+    color: var(--text-dim);
+}
+
+.thinkingBlock {
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.thinkingHeader {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    background: var(--bg-surface);
+    border: none;
+    color: var(--purple);
+    font-family: var(--font);
+    font-size: 12px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+}
+
+.thinkingHeader:hover {
+    background: var(--bg-hover);
+}
+
+.thinkingIcon {
+    display: flex;
+    align-items: center;
+}
+
+.thinkingLabel {
+    flex: 1;
+}
+
+.thinkingBody {
+    padding: 8px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+}
+
+.thinkingText {
+    font-family: var(--font);
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.markdownBody {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    word-break: break-word;
+    line-height: 1.7;
+}
+
+.markdownBody p {
+    margin: 0 0 8px;
+}
+
+.markdownBody p:last-child {
+    margin-bottom: 0;
+}
+
+.markdownBody h1,
+.markdownBody h2,
+.markdownBody h3,
+.markdownBody h4,
+.markdownBody h5,
+.markdownBody h6 {
+    margin: 12px 0 6px;
+    color: var(--text);
+}
+
+.markdownBody h1 {
+    font-size: 1.4em;
+}
+
+.markdownBody h2 {
+    font-size: 1.2em;
+}
+
+.markdownBody h3 {
+    font-size: 1.1em;
+}
+
+.markdownBody code {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-family: var(--font);
+    font-size: 0.9em;
+    color: var(--orange);
+}
+
+.markdownBody pre {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    margin: 6px 0;
+}
+
+.markdownBody pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+    font-size: 12px;
+}
+
+.markdownBody ul,
+.markdownBody ol {
+    padding-left: 20px;
+    margin: 4px 0 8px;
+}
+
+.markdownBody li {
+    margin: 2px 0;
+}
+
+.markdownBody blockquote {
+    border-left: 3px solid var(--border);
+    padding-left: 12px;
+    color: var(--text-muted);
+    margin: 6px 0;
+}
+
+.markdownBody a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.markdownBody a:hover {
+    text-decoration: underline;
+}
+
+.markdownBody hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 10px 0;
+}
+
+.markdownBody table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 8px 0;
+    font-size: 12px;
+}
+
+.markdownBody th,
+.markdownBody td {
+    border: 1px solid var(--border);
+    padding: 4px 8px;
+}
+
+.markdownBody th {
+    background: var(--bg-surface);
+}

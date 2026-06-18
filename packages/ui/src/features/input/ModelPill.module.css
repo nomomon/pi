@@ -1,0 +1,138 @@
+/* Model selector pill */
+.inputModelPill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 32px;
+    padding: 0 12px;
+    background: var(--bg-active);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    transition: background 0.1s ease;
+    flex-shrink: 0;
+}
+
+.inputModelPill:hover,
+.inputModelPill.open {
+    background: var(--bg-hover);
+}
+
+.pillModelName {
+    color: var(--text);
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Model dropdown */
+.inputModelDropdown {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.3);
+    padding: 4px;
+    max-height: 360px;
+    overflow-y: auto;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 50;
+}
+
+.inputModelDropdown::-webkit-scrollbar {
+    width: 5px;
+}
+
+.inputModelDropdown::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+
+/* Model search */
+.imdSearchWrap {
+    padding: 6px 8px 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+}
+
+.imdSearch {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    padding: 6px 10px;
+    outline: none;
+    transition: border-color 0.1s ease;
+}
+
+.imdSearch:focus {
+    border-color: var(--accent);
+}
+
+.imdSearch::placeholder {
+    color: var(--text-dim);
+}
+
+.imdLoading {
+    padding: 12px 14px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-family: var(--font-sans);
+}
+
+.imdRow {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    gap: 8px;
+    transition: background 0.1s ease;
+}
+
+.imdRow:hover,
+.imdRow.open {
+    background: var(--bg-hover);
+}
+
+.imdRowInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.imdModelName {
+    color: var(--text);
+    font-size: 14px;
+    font-family: var(--font-sans);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.imdModelSub {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-family: var(--font-sans);
+}
+
+.imdCheck {
+    color: var(--accent);
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.imdRow.active .imdModelName {
+    color: var(--accent);
+}

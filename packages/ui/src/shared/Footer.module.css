@@ -1,0 +1,46 @@
+.footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+    font-size: 11px;
+    font-family: var(--font-sans);
+    color: var(--text-dim);
+    flex-shrink: 0;
+}
+
+.footerModel {
+    color: var(--green);
+}
+
+.footerThinking {
+    color: var(--purple);
+}
+
+.footerTokens {
+    color: var(--yellow);
+}
+
+.footerSession {
+    color: var(--text-muted);
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.footerSession:hover {
+    color: var(--text);
+}
+
+.footerRenameInput {
+    background: var(--bg);
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 11px;
+    padding: 2px 6px;
+    outline: none;
+    margin-left: auto;
+}

@@ -1,6 +1,7 @@
 import { For, Show, Switch, Match, createSignal, onMount } from 'solid-js'
 import { ChevronDown, ChevronRight, CheckCircle2, XCircle, Loader2, TerminalSquare, FilePlus, FileText, FilePen, Search, FolderOpen, Wrench, ClockFading } from 'lucide-solid'
-import type { ChatEntry } from '../types'
+import type { ChatEntry } from '../../types'
+import styles from './ToolCallGroup.module.css'
 
 function n(count: number, singular: string, plural: string): string {
     return count === 1 ? `a ${singular}` : `${count} ${plural}`
@@ -75,9 +76,9 @@ function toolTarget(name: string, args: any): string {
 /** Top or bottom 8px spacer with the spine segment inside the icon column */
 function Spacer(props: { class?: string }) {
     return (
-        <div class={`tl-spacer ${props.class ?? ''}`}>
-            <div class="tl-icon-col" />
-            <div class="tl-spacer-fill" />
+        <div class={`${styles.tlSpacer} ${props.class ?? ''}`}>
+            <div class={styles.tlIconCol} />
+            <div class={styles.tlSpacerFill} />
         </div>
     )
 }
@@ -105,9 +106,9 @@ function ToolArgDisplay(props: { name: string; args: any }) {
     }
     return (
         <Show when={value()}>
-            <div class="timeline-detail-section">
-                <div class="timeline-detail-label">{label()}</div>
-                <pre class="timeline-detail-code">{value()}</pre>
+            <div class={styles.timelineDetailSection}>
+                <div class={styles.timelineDetailLabel}>{label()}</div>
+                <pre class={styles.timelineDetailCode}>{value()}</pre>
             </div>
         </Show>
     )
@@ -123,20 +124,20 @@ interface Props {
 
 export default function StepGroup(props: Props) {
     return (
-        <div class="step-group">
-            <button class="step-group-header" onClick={props.onToggle}>
-                <span class="step-group-chevron">
+        <div class={styles.stepGroup}>
+            <button class={styles.stepGroupHeader} onClick={props.onToggle}>
+                <span class={styles.stepGroupChevron}>
                     <Show when={props.expanded} fallback={<ChevronRight size={16} />}>
                         <ChevronDown size={16} />
                     </Show>
                 </span>
-                <span class="step-group-summary">{summarize(props.entries)}</span>
+                <span class={styles.stepGroupSummary}>{summarize(props.entries)}</span>
             </button>
             <div
-                class="timeline-collapse"
+                class={styles.timelineCollapse}
                 style={{ 'grid-template-rows': props.expanded ? '1fr' : '0fr' }}
             >
-                <div class="timeline-body">
+                <div class={styles.timelineBody}>
                     <For each={props.entries}>
                         {(entry) => (
                             <Switch>
@@ -162,30 +163,30 @@ export default function StepGroup(props: Props) {
                                     />
                                 </Match>
                                 <Match when={entry.type === 'compaction'}>
-                                    <InlineNode iconClass="tl-icon-dim" icon={<span>↻</span>} label={entry.message ?? 'Context compacted'} />
+                                    <InlineNode iconClass={styles.tlIconDim} icon={<span>↻</span>} label={entry.message ?? 'Context compacted'} />
                                 </Match>
                                 <Match when={entry.type === 'system'}>
                                     <InlineNode
-                                        iconClass="tl-icon-dim"
+                                        iconClass={styles.tlIconDim}
                                         icon={<span>·</span>}
                                         label={entry.message ?? ''}
-                                        labelClass={entry.message?.startsWith('Error') ? 'tl-label-error' : undefined}
+                                        labelClass={entry.message?.startsWith('Error') ? styles.tlLabelError : undefined}
                                     />
                                 </Match>
                             </Switch>
                         )}
                     </For>
-                    <div class="tl-node">
-                        <Spacer class="tl-spacer-top" />
-                        <div class="tl-row">
-                            <div class="tl-icon-col">
-                                <div class="tl-icon tl-icon-done"><CheckCircle2 size={16} /></div>
+                    <div class={styles.tlNode}>
+                        <Spacer class={styles.tlSpacerTop} />
+                        <div class={styles.tlRow}>
+                            <div class={styles.tlIconCol}>
+                                <div class={`${styles.tlIcon} ${styles.tlIconDone}`}><CheckCircle2 size={16} /></div>
                             </div>
-                            <div class="tl-content">
-                                <span class="tl-label-done">Done</span>
+                            <div class={styles.tlContent}>
+                                <span class={styles.tlLabelDone}>Done</span>
                             </div>
                         </div>
-                        <Spacer class="tl-spacer-bottom" />
+                        <Spacer class={styles.tlSpacerBottom} />
                     </div>
                 </div>
             </div>
@@ -196,17 +197,17 @@ export default function StepGroup(props: Props) {
 /** Simple non-expandable inline node (compaction, system messages) */
 function InlineNode(props: { iconClass: string; icon: any; label: string; labelClass?: string }) {
     return (
-        <div class="tl-node">
-            <Spacer class="tl-spacer-top" />
-            <div class="tl-row">
-                <div class="tl-icon-col">
-                    <div class={`tl-icon ${props.iconClass}`}>{props.icon}</div>
+        <div class={styles.tlNode}>
+            <Spacer class={styles.tlSpacerTop} />
+            <div class={styles.tlRow}>
+                <div class={styles.tlIconCol}>
+                    <div class={`${styles.tlIcon} ${props.iconClass}`}>{props.icon}</div>
                 </div>
-                <div class="tl-content">
-                    <span class={`tl-label tl-label-inline ${props.labelClass ?? ''}`}>{props.label}</span>
+                <div class={styles.tlContent}>
+                    <span class={`${styles.tlLabel} ${styles.tlLabelInline} ${props.labelClass ?? ''}`}>{props.label}</span>
                 </div>
             </div>
-            <Spacer class="tl-spacer-bottom" />
+            <Spacer class={styles.tlSpacerBottom} />
         </div>
     )
 }
@@ -223,29 +224,29 @@ function ThinkingNode(props: { entry: ChatEntry; expanded: boolean; onToggle: ()
     })
 
     return (
-        <div class="tl-node">
-            <Spacer class="tl-spacer-top" />
-            <div class="tl-row tl-row-thinking">
-                <div class="tl-icon-col">
-                    <div class="tl-icon tl-icon-thinking"><ClockFading size={16} /></div>
+        <div class={styles.tlNode}>
+            <Spacer class={styles.tlSpacerTop} />
+            <div class={`${styles.tlRow} ${styles.tlRowThinking}`}>
+                <div class={styles.tlIconCol}>
+                    <div class={`${styles.tlIcon} ${styles.tlIconThinking}`}><ClockFading size={16} /></div>
                 </div>
-                <div class="tl-content">
-                    <div class="tl-thinking-wrap">
+                <div class={styles.tlContent}>
+                    <div class={styles.tlThinkingWrap}>
                         <div
                             ref={textRef}
-                            class={`tl-thinking-text${!isLong() ? ' tl-thinking-text-short' : props.expanded ? ' tl-thinking-text-open' : ''}`}
+                            class={`${styles.tlThinkingText}${!isLong() ? ` ${styles.tlThinkingTextShort}` : props.expanded ? ` ${styles.tlThinkingTextOpen}` : ''}`}
                         >
                             {preview() || 'Thought process'}
                         </div>
                         <Show when={isLong()}>
-                            <button class="tl-thinking-toggle" onClick={props.onToggle}>
+                            <button class={styles.tlThinkingToggle} onClick={props.onToggle}>
                                 {props.expanded ? 'Show less' : 'Show more'}
                             </button>
                         </Show>
                     </div>
                 </div>
             </div>
-            <Spacer class="tl-spacer-bottom" />
+            <Spacer class={styles.tlSpacerBottom} />
         </div>
     )
 }
@@ -265,12 +266,18 @@ function ToolNode(props: { entry: ChatEntry; expanded: boolean; onToggle: () => 
         return JSON.stringify(r, null, 2)
     }
 
+    const iconClass = () => {
+        if (props.entry.toolIsRunning) return styles.tlIconRunning
+        if (props.entry.toolIsError) return styles.tlIconError
+        return styles.tlIconDim
+    }
+
     return (
-        <div class="tl-node">
-            <Spacer class="tl-spacer-top" />
-            <div class="tl-row">
-                <div class="tl-icon-col">
-                    <div class={`tl-icon tl-icon-${status()}`}>
+        <div class={styles.tlNode}>
+            <Spacer class={styles.tlSpacerTop} />
+            <div class={styles.tlRow}>
+                <div class={styles.tlIconCol}>
+                    <div class={`${styles.tlIcon} ${iconClass()}`}>
                         <Show when={props.entry.toolIsRunning}>
                             <Loader2 size={16} class="spin" />
                         </Show>
@@ -282,35 +289,35 @@ function ToolNode(props: { entry: ChatEntry; expanded: boolean; onToggle: () => 
                         </Show>
                     </div>
                 </div>
-                <div class="tl-content">
-                    <button class="tl-btn" onClick={props.onToggle}>
-                        <span class="tl-label">
-                            <span class="tl-label-verb">{toolVerb(props.entry.toolName ?? '')}</span>
+                <div class={styles.tlContent}>
+                    <button class={styles.tlBtn} onClick={props.onToggle}>
+                        <span class={styles.tlLabel}>
+                            <span class={styles.tlLabelVerb}>{toolVerb(props.entry.toolName ?? '')}</span>
                             <Show when={toolTarget(props.entry.toolName ?? '', props.entry.toolArgs)}>
-                                <code class="tl-label-code">{toolTarget(props.entry.toolName ?? '', props.entry.toolArgs)}</code>
+                                <code class={styles.tlLabelCode}>{toolTarget(props.entry.toolName ?? '', props.entry.toolArgs)}</code>
                             </Show>
                         </span>
                     </button>
                 </div>
             </div>
-            <div class="tl-detail-collapse" style={{ 'grid-template-rows': props.expanded ? '1fr' : '0fr' }}>
-                <div class="tl-detail-row">
-                    <div class="tl-icon-col" />
-                    <div class="tl-detail-content">
+            <div class={styles.tlDetailCollapse} style={{ 'grid-template-rows': props.expanded ? '1fr' : '0fr' }}>
+                <div class={styles.tlDetailRow}>
+                    <div class={styles.tlIconCol} />
+                    <div class={styles.tlDetailContent}>
                         <ToolArgDisplay name={props.entry.toolName ?? ''} args={props.entry.toolArgs} />
                         <Show when={resultText()}>
-                            <div class="timeline-detail-section">
-                                <div class="timeline-detail-label">{props.entry.toolIsError ? 'Error' : 'Output'}</div>
-                                <pre class={`timeline-detail-code${props.entry.toolIsError ? ' timeline-detail-error' : ''}`}>{resultText()}</pre>
+                            <div class={styles.timelineDetailSection}>
+                                <div class={styles.timelineDetailLabel}>{props.entry.toolIsError ? 'Error' : 'Output'}</div>
+                                <pre class={`${styles.timelineDetailCode}${props.entry.toolIsError ? ` ${styles.timelineDetailError}` : ''}`}>{resultText()}</pre>
                             </div>
                         </Show>
                         <Show when={props.entry.toolIsRunning && !resultText()}>
-                            <div class="timeline-detail-dim">Running…</div>
+                            <div class={styles.timelineDetailDim}>Running…</div>
                         </Show>
                     </div>
                 </div>
             </div>
-            <Spacer class="tl-spacer-bottom" />
+            <Spacer class={styles.tlSpacerBottom} />
         </div>
     )
 }
@@ -320,12 +327,18 @@ function BashNode(props: { entry: ChatEntry; expanded: boolean; onToggle: () => 
     const shortCmd = () => (props.entry.bashCommand ?? '').split('\n')[0].slice(0, 80)
     const exitOk = () => (props.entry.bashExitCode ?? 0) === 0
 
+    const iconClass = () => {
+        if (props.entry.bashIsRunning) return styles.tlIconRunning
+        if (!exitOk()) return styles.tlIconError
+        return styles.tlIconDim
+    }
+
     return (
-        <div class="tl-node">
-            <Spacer class="tl-spacer-top" />
-            <div class="tl-row">
-                <div class="tl-icon-col">
-                    <div class={`tl-icon ${props.entry.bashIsRunning ? 'tl-icon-running' : !exitOk() ? 'tl-icon-error' : 'tl-icon-dim'}`}>
+        <div class={styles.tlNode}>
+            <Spacer class={styles.tlSpacerTop} />
+            <div class={styles.tlRow}>
+                <div class={styles.tlIconCol}>
+                    <div class={`${styles.tlIcon} ${iconClass()}`}>
                         <Show when={props.entry.bashIsRunning} fallback={
                             <Show when={!exitOk()} fallback={<TerminalSquare size={16} />}>
                                 <XCircle size={16} />
@@ -335,45 +348,45 @@ function BashNode(props: { entry: ChatEntry; expanded: boolean; onToggle: () => 
                         </Show>
                     </div>
                 </div>
-                <div class="tl-content">
+                <div class={styles.tlContent}>
                     <button
-                        class={`tl-btn${hasOutput() ? '' : ' tl-btn-plain'}`}
+                        class={`${styles.tlBtn}${hasOutput() ? '' : ` ${styles.tlBtnPlain}`}`}
                         onClick={hasOutput() ? props.onToggle : undefined}
                     >
-                        <span class="tl-label">
-                            <span class="tl-label-verb">Ran</span>
-                            <code class="tl-label-code">{shortCmd()}</code>
+                        <span class={styles.tlLabel}>
+                            <span class={styles.tlLabelVerb}>Ran</span>
+                            <code class={styles.tlLabelCode}>{shortCmd()}</code>
                             {!props.entry.bashIsRunning && !exitOk() && (
-                                <span class="timeline-bash-exit"> · exit {props.entry.bashExitCode}</span>
+                                <span class={styles.timelineBashExit}> · exit {props.entry.bashExitCode}</span>
                             )}
                         </span>
                     </button>
                 </div>
             </div>
-            <div class="tl-detail-collapse" style={{ 'grid-template-rows': props.expanded && hasOutput() ? '1fr' : '0fr' }}>
-                <div class="tl-detail-row">
-                    <div class="tl-icon-col" />
-                    <div class="tl-detail-content">
-                        <div class="timeline-detail-section">
-                            <div class="timeline-detail-label">Command</div>
-                            <pre class="timeline-detail-code">{props.entry.bashCommand}</pre>
+            <div class={styles.tlDetailCollapse} style={{ 'grid-template-rows': props.expanded && hasOutput() ? '1fr' : '0fr' }}>
+                <div class={styles.tlDetailRow}>
+                    <div class={styles.tlIconCol} />
+                    <div class={styles.tlDetailContent}>
+                        <div class={styles.timelineDetailSection}>
+                            <div class={styles.timelineDetailLabel}>Command</div>
+                            <pre class={styles.timelineDetailCode}>{props.entry.bashCommand}</pre>
                         </div>
                         <Show when={props.entry.bashOutput}>
-                            <div class="timeline-detail-section">
-                                <div class="timeline-detail-label">{exitOk() ? 'Output' : 'Error'}</div>
-                                <pre class={`timeline-detail-code${!exitOk() ? ' timeline-detail-error' : ''}`}>{props.entry.bashOutput}</pre>
+                            <div class={styles.timelineDetailSection}>
+                                <div class={styles.timelineDetailLabel}>{exitOk() ? 'Output' : 'Error'}</div>
+                                <pre class={`${styles.timelineDetailCode}${!exitOk() ? ` ${styles.timelineDetailError}` : ''}`}>{props.entry.bashOutput}</pre>
                             </div>
                         </Show>
                         <Show when={props.entry.bashIsRunning && !props.entry.bashOutput}>
-                            <div class="timeline-detail-dim">Running…</div>
+                            <div class={styles.timelineDetailDim}>Running…</div>
                         </Show>
                         <Show when={props.entry.bashTruncated}>
-                            <div class="timeline-detail-dim" style={{ 'font-style': 'italic', 'margin-top': '3px' }}>output truncated</div>
+                            <div class={styles.timelineDetailDim} style={{ 'font-style': 'italic', 'margin-top': '3px' }}>output truncated</div>
                         </Show>
                     </div>
                 </div>
             </div>
-            <Spacer class="tl-spacer-bottom" />
+            <Spacer class={styles.tlSpacerBottom} />
         </div>
     )
 }

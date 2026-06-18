@@ -1,0 +1,367 @@
+/* ===== Step Group ===== */
+.stepGroup {
+    margin: 6px 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.stepGroupHeader {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px 4px 8px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.stepGroupHeader:hover {
+    background: var(--bg-hover);
+    color: var(--text);
+    border-color: var(--text-dim);
+}
+
+.stepGroupChevron {
+    display: flex;
+    align-items: center;
+}
+
+/* ===== Timeline collapse (CSS grid animation) ===== */
+.timelineCollapse {
+    display: grid;
+    transition: grid-template-rows 300ms ease-out;
+    width: 100%;
+}
+
+.timelineCollapse > .timelineBody {
+    overflow: hidden;
+    min-width: 0;
+}
+
+/* ===== Timeline (sandwich spine) ===== */
+.timelineBody {
+    width: 100%;
+    padding: 2px 0;
+    font-family: var(--font-sans);
+}
+
+/* Each node is a vertical flex column */
+.tlNode {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Spacer rows: 8px, contains the spine segment */
+.tlSpacer {
+    display: flex;
+    height: 8px;
+}
+
+.tlIconCol {
+    width: 20px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    align-self: stretch;
+    position: relative;
+}
+
+.tlIconCol::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    background: var(--border);
+}
+
+.tlIconCol .tlIcon {
+    position: relative;
+    z-index: 1;
+    background: var(--bg);
+    border-radius: 2px;
+}
+
+.tlSpacerFill {
+    flex: 1;
+}
+
+/* Content row */
+.tlRow {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    gap: 6px;
+}
+
+.tlRowThinking {
+    align-items: flex-start;
+}
+
+/* Icon in the content row */
+.tlIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+}
+
+/* Icon color variants */
+.tlIconThinking {
+    color: var(--purple);
+}
+
+.tlIconRunning {
+    color: var(--yellow);
+}
+
+.tlIconRunning svg {
+    animation: spin 1s linear infinite;
+}
+
+.tlIconError {
+    color: var(--red);
+}
+
+.tlIconDone {
+    color: var(--green);
+}
+
+.tlIconDim {
+    color: var(--text-dim);
+}
+
+/* Content beside icon */
+.tlContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.tlContent {
+    line-height: 1;
+}
+
+/* Label button */
+.tlBtn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    cursor: pointer;
+    text-align: left;
+    padding: 0;
+    gap: 6px;
+}
+
+.tlBtn:hover {
+    color: var(--text-muted);
+}
+
+.tlBtnPlain {
+    cursor: default;
+}
+
+.tlBtnPlain:hover {
+    color: var(--text-dim);
+}
+
+/* w-0 flex-grow trick for reliable truncation inside flex */
+.tlLabel {
+    width: 0;
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-muted);
+}
+
+.tlLabelVerb {
+    color: var(--text-dim);
+    margin-right: 4px;
+}
+
+.tlLabelInline {
+    width: auto;
+    flex-grow: 0;
+    font-family: var(--font-sans);
+    font-size: 12px;
+}
+
+/* Thinking block fade */
+.tlThinkingWrap {
+    position: relative;
+    padding-bottom: 2px;
+}
+
+.tlThinkingText {
+    font-family: var(--font);
+    font-size: 11px;
+    color: var(--text-dim);
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.5;
+    max-height: calc(11px * 1.5 * 2.5); /* 2.5 lines */
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+    transition: max-height 0.3s ease, -webkit-mask-image 0.3s ease, mask-image 0.3s ease;
+}
+
+.tlThinkingTextShort {
+    max-height: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+}
+
+.tlThinkingTextOpen {
+    max-height: 2000px;
+    -webkit-mask-image: linear-gradient(to bottom, black 100%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 100%, transparent 100%);
+}
+
+.tlThinkingToggle {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 2px 0 0;
+    display: block;
+    text-align: left;
+}
+
+.tlThinkingToggle:hover {
+    color: var(--text-muted);
+}
+
+.tlLabelError {
+    color: var(--red);
+}
+
+/* Inline code fragment in labels (e.g. Ran `command`) */
+.tlLabelCode {
+    font-family: var(--font);
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0 4px;
+}
+
+.tlLabelDone {
+    color: var(--text-dim);
+    font-family: var(--font-sans);
+    font-size: 12px;
+}
+
+/* Detail collapse: same grid trick as timeline-collapse */
+.tlDetailCollapse {
+    display: grid;
+    transition: grid-template-rows 250ms ease-out;
+    width: 100%;
+}
+
+.tlDetailCollapse > .tlDetailRow {
+    overflow: hidden;
+    min-width: 0;
+}
+
+/* Detail rows: spine continues through expanded content */
+.tlDetailRow {
+    display: flex;
+    align-items: stretch;
+}
+
+.tlDetailRow > .tlIconCol {
+    align-items: flex-start;
+}
+
+.tlDetailContent {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 0 6px 8px;
+}
+
+/* Expanded detail sections */
+.timelineDetailSection {
+    margin-bottom: 6px;
+}
+
+.timelineDetailSection:last-child {
+    margin-bottom: 0;
+}
+
+.timelineDetailLabel {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 3px;
+    font-family: var(--font-sans);
+}
+
+.timelineDetailCode {
+    font-family: var(--font);
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: pre-wrap;
+    word-break: break-all;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 0;
+}
+
+.timelineDetailError {
+    color: var(--red);
+}
+
+.timelineDetailDim {
+    color: var(--text-dim);
+    font-family: var(--font-sans);
+    font-size: 12px;
+}
+
+.timelineBashExit {
+    color: var(--red);
+    font-size: 11px;
+}
+
+/* Spine termination: no segment above first node or below last */
+.tlNode:first-child > .tlSpacerTop .tlIconCol::before {
+    background: transparent;
+}
+
+.tlNode:last-child > .tlSpacerBottom .tlIconCol::before {
+    background: transparent;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

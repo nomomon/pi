@@ -1,13 +1,14 @@
 import { onMount, Show } from 'solid-js'
 import { state, setState } from './store'
 import { connect } from './ws'
-import ChatView from './components/ChatView'
-import InputArea from './components/InputArea'
-import Footer from './components/Footer'
-import StatusBar from './components/StatusBar'
-import ModelSelector from './components/ModelSelector'
-import SessionSelector from './components/SessionSelector'
-import SessionSidebar from './components/SessionSidebar'
+import ChatView from './features/chat/ChatView'
+import InputArea from './features/input/InputArea'
+import Footer from './shared/Footer'
+import StatusBar from './shared/StatusBar'
+import ModelSelector from './features/input/ModelSelector'
+import SessionSelector from './features/sessions/SessionSelector'
+import SessionSidebar from './features/sessions/SessionSidebar'
+import styles from './App.module.css'
 
 export default function App() {
   onMount(() => {
@@ -15,18 +16,18 @@ export default function App() {
   })
 
   return (
-    <div class="app">
+    <div class={styles.app}>
       <SessionSidebar />
-      <div class="main-content">
-        <header class="app-header">
-          <div class="header-left">
-            <span class="app-title">pi</span>
+      <div class={styles.mainContent}>
+        <header class={styles.appHeader}>
+          <div class={styles.headerLeft}>
+            <span class={styles.appTitle}>pi</span>
             <Show when={state.sessionName}>
-              <span class="session-name">{state.sessionName}</span>
+              <span class={styles.sessionName}>{state.sessionName}</span>
             </Show>
           </div>
-          <div class="header-right">
-            <span class={`connection-dot ${state.connected ? 'connected' : state.connecting ? 'connecting' : 'disconnected'}`} />
+          <div class={styles.headerRight}>
+            <span class={`${styles.connectionDot} ${state.connected ? styles.connected : state.connecting ? styles.connecting : styles.disconnected}`} />
           </div>
         </header>
 
@@ -41,7 +42,7 @@ export default function App() {
 
       <Show when={state.notification}>
         {(n) => (
-          <div class={`notification notification-${n().kind}`}>
+          <div class={`${styles.notification} ${n().kind === 'error' ? styles.notificationError : n().kind === 'warning' ? styles.notificationWarning : styles.notificationInfo}`}>
             {n().text}
           </div>
         )}

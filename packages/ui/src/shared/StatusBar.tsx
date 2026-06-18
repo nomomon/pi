@@ -1,12 +1,13 @@
 import { Show } from 'solid-js'
 import { state } from '../store'
+import styles from './StatusBar.module.css'
 
 export default function StatusBar() {
   return (
     <Show when={state.isStreaming || state.isCompacting}>
-      <div class="status-bar">
-        <span class="status-spinner">&#x27F3;</span>
-        <span class="status-text">
+      <div class={styles.statusBar}>
+        <span class={styles.statusSpinner}>&#x27F3;</span>
+        <span class={styles.statusText}>
           {state.isCompacting ? 'Compacting...' : 'Streaming...'}
         </span>
       </div>

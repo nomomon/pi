@@ -1,0 +1,217 @@
+/* ===== Session Sidebar ===== */
+.sessionSidebar {
+    width: 220px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-surface);
+    box-shadow: inset -1px 0 0 var(--border);
+    overflow: hidden;
+}
+
+.sidebarHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px 8px;
+    border-bottom: 1px solid var(--border, #333);
+    flex-shrink: 0;
+}
+
+.sidebarTitle {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted, #666);
+}
+
+.sidebarNewBtn {
+    background: none;
+    border: 1px solid var(--border, #333);
+    color: var(--text-muted, #666);
+    cursor: pointer;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.sidebarNewBtn:hover {
+    border-color: var(--accent, #4a9eff);
+    color: var(--accent, #4a9eff);
+}
+
+.sidebarList {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0;
+}
+
+.sidebarGroup {
+    margin-bottom: 2px;
+}
+
+.sidebarGroupHeader {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    padding: 4px 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted, #666);
+    font-size: 11px;
+    text-align: left;
+}
+
+.sidebarGroupHeader:hover {
+    background: var(--bg-hover, #252525);
+}
+
+.sidebarGroupArrow {
+    font-size: 9px;
+    flex-shrink: 0;
+}
+
+.sidebarGroupName {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.sidebarGroupCount {
+    font-size: 10px;
+    color: var(--text-muted, #555);
+    background: var(--bg-hover, #252525);
+    padding: 0 4px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.sidebarGroupSessions {
+    padding-left: 4px;
+}
+
+.sidebarSession {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 5px 8px 5px 16px;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    min-width: 0;
+}
+
+.sidebarSession:hover {
+    background: var(--bg-hover, #252525);
+}
+
+.active {}
+
+.sidebarSession.active {
+    border-left-color: var(--accent, #4a9eff);
+    background: var(--bg-hover, #252525);
+}
+
+.sidebarSessionName {
+    font-size: 12px;
+    color: var(--text, #ccc);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 24px;
+}
+
+.sidebarSessionPreview {
+    font-size: 11px;
+    color: var(--text-muted, #666);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 1px;
+}
+
+.sidebarSessionMenuWrap {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.sidebarMenuBtn {
+    background: none;
+    border: none;
+    color: var(--text-muted, #666);
+    cursor: pointer;
+    padding: 2px 4px;
+    font-size: 14px;
+    border-radius: 3px;
+    opacity: 0;
+    line-height: 1;
+}
+
+.sidebarSession:hover .sidebarMenuBtn,
+.sidebarSession.active .sidebarMenuBtn {
+    opacity: 1;
+}
+
+.sidebarMenuBtn:hover {
+    background: var(--bg-hover, #333);
+    color: var(--text, #ccc);
+}
+
+.sidebarDropdown {
+    background: var(--bg-secondary, #1e1e1e);
+    border: 1px solid var(--border, #333);
+    border-radius: 4px;
+    padding: 2px 0;
+    min-width: 100px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.sidebarDropdownItem {
+    display: block;
+    width: 100%;
+    padding: 6px 12px;
+    background: none;
+    border: none;
+    color: var(--text, #ccc);
+    cursor: pointer;
+    font-size: 12px;
+    text-align: left;
+}
+
+.sidebarDropdownItem:hover {
+    background: var(--bg-hover, #2a2a2a);
+}
+
+.danger {}
+
+.sidebarDropdownItem.danger {
+    color: #e05252;
+}
+
+.sidebarDropdownItem.danger:hover {
+    background: rgba(224, 82, 82, 0.1);
+}
+
+.sidebarRenameInput {
+    width: calc(100% - 24px);
+    background: var(--bg, #111);
+    border: 1px solid var(--accent, #4a9eff);
+    color: var(--text, #ccc);
+    font-size: 12px;
+    padding: 2px 4px;
+    border-radius: 2px;
+    outline: none;
+}
+
+.sidebarEmpty {
+    padding: 12px 12px;
+    font-size: 12px;
+    color: var(--text-muted, #555);
+}

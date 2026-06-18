@@ -1,7 +1,12 @@
-import { createSignal, createMemo, createEffect, For, Show, onCleanup } from 'solid-js'
-import { state, setState, pushHistory, showNotification } from '../store'
-import { send, sendCommand, sendBash, reloadSession } from '../ws'
-import type { RpcSlashCommand } from '../types'
+import { createSignal, createMemo, createEffect, Show, onCleanup } from 'solid-js'
+import { state, setState, pushHistory, showNotification } from '../../store'
+import { send, sendCommand, sendBash, reloadSession } from '../../ws'
+import type { RpcSlashCommand } from '../../types'
+import SlashSuggestions from './SlashSuggestions'
+import ModelPill from './ModelPill'
+import ThinkingPill from './ThinkingPill'
+import ContextIndicator from './ContextIndicator'
+import styles from './InputArea.module.css'
 
 const BUILTIN_COMMANDS: RpcSlashCommand[] = [
   { name: 'model', description: 'Switch model', source: 'builtin' },
@@ -24,7 +29,7 @@ const THINKING_LEVELS = [
 export default function InputArea() {
   let textareaRef: HTMLTextAreaElement | undefined
   let cardRef: HTMLDivElement | undefined
-  let searchInputRef: HTMLInputElement | undefined
+
   const [value, setValue] = createSignal('')
   const [isComposing, setIsComposing] = createSignal(false)
   const [selectedSuggestion, setSelectedSuggestion] = createSignal(-1)
@@ -34,6 +39,7 @@ export default function InputArea() {
   const [modelsLoading, setModelsLoading] = createSignal(false)
   const [modelSearch, setModelSearch] = createSignal('')
 
+  // Close all menus on outside click
   createEffect(() => {
     const any = showModelMenu() || showThinkingMenu() || showContextMenu()
     if (any) {
@@ -49,10 +55,7 @@ export default function InputArea() {
     }
   })
 
-  createEffect(() => {
-    if (showModelMenu()) setTimeout(() => searchInputRef?.focus(), 0)
-  })
-
+  // Pre-load models when connected
   createEffect(() => {
     if (state.connected && state.availableModels.length === 0) {
       sendCommand({ type: 'get_available_models' })
@@ -92,8 +95,8 @@ export default function InputArea() {
 
   const supportedThinkingLevels = createMemo(() => {
     const m = currentModelConfig()
-    if (!m) return THINKING_LEVELS // model list not loaded yet — show all
-    if (!m.reasoning) return THINKING_LEVELS // non-reasoning model — pill will be hidden
+    if (!m) return THINKING_LEVELS
+    if (!m.reasoning) return THINKING_LEVELS
     const map: Record<string, string | null> = m.thinkingLevelMap ?? {}
     return THINKING_LEVELS.filter(t => {
       if (t.value === 'auto' || t.value === 'none') return true
@@ -103,7 +106,7 @@ export default function InputArea() {
 
   const modelSupportsReasoning = createMemo(() => {
     const m = currentModelConfig()
-    if (!m) return true // unknown — show pill by default
+    if (!m) return true
     return !!m.reasoning
   })
 
@@ -125,6 +128,16 @@ export default function InputArea() {
     if (p >= 0.7) return 'var(--yellow)'
     return 'var(--accent)'
   })
+
+  const modelDisplayName = () => {
+    if (!state.model) return 'No model'
+    return state.model.name ?? state.model.id
+  }
+
+  const thinkingDisplay = () => {
+    const t = state.thinkingLevel
+    return t.charAt(0).toUpperCase() + t.slice(1)
+  }
 
   function applySuggestion(cmd: RpcSlashCommand) {
     const needsArgs = ['compact', 'name', 'thinking'].includes(cmd.name)
@@ -324,37 +337,16 @@ export default function InputArea() {
     }
   }
 
-  const modelDisplayName = () => {
-    if (!state.model) return 'No model'
-    return state.model.name ?? state.model.id
-  }
-
-  const thinkingDisplay = () => {
-    const t = state.thinkingLevel
-    return t.charAt(0).toUpperCase() + t.slice(1)
-  }
-
   return (
-    <div class="input-area">
-      <div class="input-card" ref={cardRef}>
+    <div class={styles.inputArea}>
+      <div class={styles.inputCard} ref={cardRef}>
         <Show when={suggestions().length > 0}>
-          <div class="slash-suggestions-wrap">
-            <div class="slash-suggestions">
-              <For each={suggestions()}>
-                {(cmd, i) => (
-                  <div
-                    class={`slash-suggestion ${i() === selectedSuggestion() ? 'selected' : ''}`}
-                    onMouseDown={(e) => { e.preventDefault(); applySuggestion(cmd) }}
-                    onMouseEnter={() => setSelectedSuggestion(i())}
-                  >
-                    <span class="suggestion-name">/{cmd.name}</span>
-                    {cmd.description && <span class="suggestion-desc">{cmd.description}</span>}
-                    {cmd.source !== 'builtin' && <span class={`suggestion-source source-${cmd.source}`}>{cmd.source}</span>}
-                  </div>
-                )}
-              </For>
-            </div>
-          </div>
+          <SlashSuggestions
+            suggestions={suggestions()}
+            activeIndex={selectedSuggestion()}
+            onSelect={applySuggestion}
+            onHover={setSelectedSuggestion}
+          />
         </Show>
 
         <textarea
@@ -369,173 +361,56 @@ export default function InputArea() {
           onKeyDown={handleKeyDown}
           onCompositionStart={() => setIsComposing(true)}
           onCompositionEnd={() => setIsComposing(false)}
-          class="input-textarea"
+          class={styles.inputTextarea}
           rows={1}
           disabled={!state.connected}
         />
 
-        <div class="input-toolbar">
-          <Show when={showModelMenu()}>
-            <div class="input-model-dropdown">
-              <div class="imd-search-wrap">
-                <input
-                  ref={searchInputRef}
-                  class="imd-search"
-                  type="text"
-                  placeholder="Search models…"
-                  value={modelSearch()}
-                  onInput={(e) => setModelSearch(e.currentTarget.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Escape') { e.preventDefault(); setShowModelMenu(false); setModelSearch('') }
-                    if (e.key === 'Enter') { const first = filteredModels()[0]; if (first) selectModel(first) }
-                  }}
-                />
-              </div>
-              <Show when={modelsLoading()}>
-                <div class="imd-loading">Loading models…</div>
-              </Show>
-              <Show when={!modelsLoading()}>
-                <Show when={filteredModels().length === 0}>
-                  <div class="imd-loading">No models match "{modelSearch()}"</div>
-                </Show>
-                <For each={filteredModels()}>
-                  {(m: any) => (
-                    <div
-                      class={`imd-row ${state.model?.id === m.id ? 'active' : ''}`}
-                      onMouseDown={(e) => { e.preventDefault(); selectModel(m) }}
-                    >
-                      <div class="imd-row-info">
-                        <span class="imd-model-name">{m.name ?? m.id}</span>
-                        <span class="imd-model-sub">{m.provider}</span>
-                      </div>
-                      <Show when={state.model?.id === m.id}>
-                        <span class="imd-check">✓</span>
-                      </Show>
-                    </div>
-                  )}
-                </For>
-              </Show>
-            </div>
-          </Show>
+        <div class={styles.inputToolbar}>
+          <div class={styles.inputToolbarSpacer} />
 
-          <Show when={showThinkingMenu()}>
-            <div class="input-thinking-dropdown">
-              <For each={supportedThinkingLevels()}>
-                {(t) => (
-                  <div
-                    class={`imd-row ${state.thinkingLevel === t.value ? 'active' : ''}`}
-                    onMouseDown={(e) => { e.preventDefault(); selectThinking(t.value) }}
-                  >
-                    <div class="imd-row-info">
-                      <span class="imd-model-name">{t.label}</span>
-                    </div>
-                    <Show when={t.isDefault}>
-                      <span class="imd-default-chip">Default</span>
-                    </Show>
-                    <Show when={state.thinkingLevel === t.value}>
-                      <span class="imd-check">✓</span>
-                    </Show>
-                  </div>
-                )}
-              </For>
-            </div>
-          </Show>
-
-          <div class="input-toolbar-spacer" />
-
-          <div class="ctx-indicator-wrap">
-            <Show when={showContextMenu()}>
-              <div class="ctx-popup">
-                <button class="ctx-popup-close" onMouseDown={(e) => { e.preventDefault(); setShowContextMenu(false) }}>✕</button>
-                <div class="ctx-popup-bar-wrap">
-                  <div class="ctx-popup-bar">
-                    <div class="ctx-popup-bar-fill" style={{ width: `${Math.round((contextFill() ?? 0) * 100)}%`, background: contextArcColor() }} />
-                  </div>
-                  <span class="ctx-popup-pct">{contextFill() !== null ? `${Math.round(contextFill()! * 100)}%` : '—'}</span>
-                </div>
-                <Show when={contextFill() !== null}>
-                  <div class="ctx-popup-total">{state.inputTokens.toLocaleString()} / {(currentModelConfig()?.contextWindow ?? 0).toLocaleString()} tokens</div>
-                </Show>
-                <div class="ctx-popup-rows">
-                  <div class="ctx-popup-row">
-                    <span class="ctx-popup-dot" style={{ background: 'var(--accent)' }} />
-                    <span class="ctx-popup-label">Input</span>
-                    <span class="ctx-popup-val">{state.inputTokens.toLocaleString()}</span>
-                  </div>
-                  <div class="ctx-popup-row">
-                    <span class="ctx-popup-dot" style={{ background: 'var(--text-dim)' }} />
-                    <span class="ctx-popup-label">Output</span>
-                    <span class="ctx-popup-val">{state.outputTokens.toLocaleString()}</span>
-                  </div>
-                </div>
-                <Show when={currentModelConfig()}>
-                  <div class="ctx-popup-footer">
-                    <span>{currentModelConfig()!.name ?? currentModelConfig()!.id}</span>
-                    <span>{((currentModelConfig()!.contextWindow ?? 0) / 1000).toFixed(0)}K ctx</span>
-                  </div>
-                </Show>
-              </div>
-            </Show>
-            <button
-              class={`ctx-indicator ${showContextMenu() ? 'open' : ''}`}
-              onMouseDown={(e) => { e.preventDefault(); setShowModelMenu(false); setShowThinkingMenu(false); setShowContextMenu(v => !v) }}
-              title="Context window usage"
-            >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <circle cx="9" cy="9" r="7" stroke="var(--border)" stroke-width="2" />
-                <Show when={contextFill() !== null}>
-                  <circle
-                    cx="9" cy="9" r="7"
-                    stroke={contextArcColor()}
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-dasharray="43.98"
-                    stroke-dashoffset={43.98 * (1 - contextFill()!)}
-                    transform="rotate(-90 9 9)"
-                  />
-                </Show>
-              </svg>
-            </button>
-          </div>
-
-          <button
-            class={`input-model-pill ${showModelMenu() ? 'open' : ''}`}
-            onMouseDown={(e) => {
-              e.preventDefault()
-              if (showModelMenu()) {
-                setShowModelMenu(false)
-                setModelSearch('')
-              } else {
-                setShowThinkingMenu(false)
-                openModelMenu()
-              }
+          <ContextIndicator
+            showMenu={showContextMenu}
+            setShowMenu={(v) => {
+              setShowModelMenu(false)
+              setShowThinkingMenu(false)
+              setShowContextMenu(v)
             }}
-            title="Select model"
-          >
-            <span class="pill-model-name">{modelDisplayName()}</span>
-          </button>
+            contextFill={contextFill}
+            contextArcColor={contextArcColor}
+            inputTokens={state.inputTokens}
+            outputTokens={state.outputTokens}
+            currentModelConfig={currentModelConfig()}
+          />
 
-          <Show when={modelSupportsReasoning()}>
-            <button
-              class={`input-thinking-pill ${showThinkingMenu() ? 'open' : ''} ${isReasoningActive() ? 'reasoning' : ''}`}
-              onMouseDown={(e) => {
-                e.preventDefault()
-                if (showThinkingMenu()) {
-                  setShowThinkingMenu(false)
-                } else {
-                  setShowModelMenu(false)
-                  setModelSearch('')
-                  setShowThinkingMenu(true)
-                }
-              }}
-              title="Set thinking level"
-            >
-              <span class="pill-thinking-label">{thinkingDisplay()}</span>
-            </button>
-          </Show>
+          <ModelPill
+            showMenu={showModelMenu}
+            setShowMenu={setShowModelMenu}
+            modelDisplayName={modelDisplayName}
+            onSelectModel={selectModel}
+            onToggle={openModelMenu}
+            filteredModels={filteredModels}
+            modelsLoading={modelsLoading}
+            modelSearch={modelSearch}
+            setModelSearch={setModelSearch}
+          />
+
+          <ThinkingPill
+            showMenu={showThinkingMenu}
+            setShowMenu={(v) => {
+              setShowModelMenu(false)
+              setModelSearch('')
+              setShowThinkingMenu(v)
+            }}
+            thinkingDisplay={thinkingDisplay}
+            isReasoningActive={isReasoningActive}
+            modelSupportsReasoning={modelSupportsReasoning}
+            supportedThinkingLevels={supportedThinkingLevels}
+            onSelectLevel={selectThinking}
+          />
 
           <button
-            class={`input-send-btn ${state.isStreaming ? 'aborting' : ''}`}
+            class={`${styles.inputSendBtn}${state.isStreaming ? ` ${styles.aborting}` : ''}`}
             onClick={() => state.isStreaming ? send({ type: 'abort' }) : handleSubmit()}
             disabled={!state.connected}
             title={state.isStreaming ? 'Abort (Ctrl+C)' : 'Send'}

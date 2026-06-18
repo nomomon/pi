@@ -1,6 +1,7 @@
 import { createSignal, onMount, For, Show } from 'solid-js'
-import { state, setState, showNotification } from '../store'
-import { sendCommand } from '../ws'
+import { state, setState, showNotification } from '../../store'
+import { sendCommand } from '../../ws'
+import styles from './ModelSelector.module.css'
 
 interface Props {
   onClose: () => void
@@ -43,14 +44,14 @@ export default function ModelSelector(props: Props) {
   }
 
   return (
-    <div class="overlay" onClick={props.onClose}>
-      <div class="overlay-panel" onClick={(e) => e.stopPropagation()}>
-        <div class="overlay-header">
+    <div class={styles.overlay} onClick={props.onClose}>
+      <div class={styles.overlayPanel} onClick={(e) => e.stopPropagation()}>
+        <div class={styles.overlayHeader}>
           <span>Select Model</span>
-          <button class="overlay-close" onClick={props.onClose}>&#x2715;</button>
+          <button class={styles.overlayClose} onClick={props.onClose}>&#x2715;</button>
         </div>
         <input
-          class="overlay-search"
+          class={styles.overlaySearch}
           placeholder="Filter models..."
           value={filter()}
           onInput={(e) => setFilter(e.currentTarget.value)}
@@ -59,21 +60,21 @@ export default function ModelSelector(props: Props) {
             if (e.key === 'Escape') props.onClose()
           }}
         />
-        <div class="overlay-list">
+        <div class={styles.overlayList}>
           <Show when={loading()}>
-            <div class="overlay-loading">Loading models...</div>
+            <div class={styles.overlayLoading}>Loading models...</div>
           </Show>
           <Show when={!loading()}>
             <For each={filtered()}>
               {(m: any) => (
                 <button
-                  class={`model-item ${state.model?.id === m.id ? 'active' : ''}`}
+                  class={`${styles.modelItem}${state.model?.id === m.id ? ` ${styles.active}` : ''}`}
                   onClick={() => selectModel(m)}
                 >
-                  <span class="model-provider">{m.provider}</span>
-                  <span class="model-id">{m.id}</span>
+                  <span class={styles.modelProvider}>{m.provider}</span>
+                  <span class={styles.modelId}>{m.id}</span>
                   <Show when={m.name}>
-                    <span class="model-name">{m.name}</span>
+                    <span class={styles.modelName}>{m.name}</span>
                   </Show>
                 </button>
               )}

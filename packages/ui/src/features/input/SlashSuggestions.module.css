@@ -1,0 +1,70 @@
+/* Slash suggestions */
+.slashSuggestionsWrap {
+    overflow: hidden;
+    border-radius: 12px 12px 0 0;
+    margin: -14px -14px 0;
+}
+
+.slashSuggestions {
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-surface);
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.slashSuggestion {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 6px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+}
+
+.slashSuggestion:last-child {
+    border-bottom: none;
+}
+
+.slashSuggestion:hover,
+.slashSuggestion.selected {
+    background: var(--bg-hover);
+}
+
+.slashSuggestion.selected {
+    border-left: 2px solid var(--accent);
+    padding-left: 12px;
+}
+
+.suggestionName {
+    color: var(--accent);
+    font-weight: bold;
+    min-width: 100px;
+}
+
+.suggestionDesc {
+    color: var(--text-muted);
+    font-size: 12px;
+    flex: 1;
+}
+
+.suggestionSource {
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid;
+}
+
+.source_extension {
+    color: var(--purple);
+    border-color: var(--purple);
+}
+
+.source_prompt {
+    color: var(--yellow);
+    border-color: var(--yellow);
+}
+
+.source_skill {
+    color: var(--green);
+    border-color: var(--green);
+}

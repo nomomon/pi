@@ -1,0 +1,64 @@
+/* Bash execution entry */
+.bashExecution {
+    font-family: var(--font);
+}
+
+.bashCommand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+}
+
+.bashPrompt {
+    color: var(--green);
+    font-weight: bold;
+    user-select: none;
+}
+
+.bashCmdText {
+    color: var(--yellow);
+}
+
+.bashSpinner {
+    color: var(--text-dim);
+    animation: pulse 1s infinite;
+}
+
+.bashExitCode {
+    color: var(--red);
+    font-size: 11px;
+    margin-left: auto;
+}
+
+.bashOutput {
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 6px 8px;
+    font-size: 12px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 400px;
+    overflow-y: auto;
+    margin-top: 4px;
+}
+
+.bashTruncated {
+    color: var(--text-dim);
+    font-size: 11px;
+    font-style: italic;
+    padding: 2px 0;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+}

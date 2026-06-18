@@ -1,6 +1,7 @@
 import { Show, createSignal } from 'solid-js'
 import { state, showNotification } from '../store'
 import { sendCommand } from '../ws'
+import styles from './Footer.module.css'
 
 export default function Footer() {
   const [editingName, setEditingName] = createSignal(false)
@@ -21,26 +22,26 @@ export default function Footer() {
   }
 
   return (
-    <div class="footer">
+    <div class={styles.footer}>
       <Show when={state.model}>
         {(m) => (
-          <span class="footer-model">{m().provider}/{m().id}</span>
+          <span class={styles.footerModel}>{m().provider}/{m().id}</span>
         )}
       </Show>
-      <span class="footer-thinking">think:{state.thinkingLevel}</span>
+      <span class={styles.footerThinking}>think:{state.thinkingLevel}</span>
       <Show when={state.totalTokens > 0}>
-        <span class="footer-tokens">{state.totalTokens.toLocaleString()} tok</span>
+        <span class={styles.footerTokens}>{state.totalTokens.toLocaleString()} tok</span>
       </Show>
       <Show
         when={editingName()}
         fallback={
-          <span class="footer-session" onClick={startRename} title="Click to rename session">
+          <span class={styles.footerSession} onClick={startRename} title="Click to rename session">
             {state.sessionName ?? state.sessionId?.slice(0, 8) ?? '—'}
           </span>
         }
       >
         <input
-          class="footer-rename-input"
+          class={styles.footerRenameInput}
           value={nameInput()}
           onInput={(e) => setNameInput(e.currentTarget.value)}
           onKeyDown={(e) => {

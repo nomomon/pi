@@ -1,8 +1,9 @@
 import { For, Show, createEffect, createMemo, createSignal, Switch, Match } from 'solid-js'
-import { state } from '../store'
-import type { ChatEntry } from '../types'
+import { state } from '../../store'
+import type { ChatEntry } from '../../types'
 import AssistantMessage from './AssistantMessage'
-import StepGroup from './ToolCallGroup'
+import StepGroup from '../../components/ToolCallGroup'
+import styles from './ChatView.module.css'
 
 type GroupedEntry =
   | { kind: 'message'; entry: ChatEntry; hideThinking: boolean }
@@ -58,8 +59,8 @@ export default function ChatView() {
   })
 
   return (
-    <div class="chat-view" ref={containerRef}>
-      <div class="chat-column">
+    <div class={styles.chatView} ref={containerRef}>
+      <div class={styles.chatColumn}>
         <For each={grouped()}>
           {(item) => (
             <Show
@@ -85,9 +86,9 @@ export default function ChatView() {
           )}
         </For>
         <Show when={state.messages.length === 0 && state.connected}>
-          <div class="empty-state">
-            <div class="empty-title">pi coding agent</div>
-            <div class="empty-hint">Type a message to start. Use /model to switch models, /new for a new session.</div>
+          <div class={styles.emptyState}>
+            <div class={styles.emptyTitle}>pi coding agent</div>
+            <div class={styles.emptyHint}>Type a message to start. Use /model to switch models, /new for a new session.</div>
           </div>
         </Show>
       </div>
@@ -100,14 +101,14 @@ function MessageRenderer(props: { entry: ChatEntry; hideThinking: boolean }) {
   return (
     <Switch>
       <Match when={e().type === 'user'}>
-        <div class="chat-entry user-entry">
-          <span class="role-label">You</span>
-          <div class="user-text">{e().text}</div>
+        <div class={`${styles.chatEntry} ${styles.userEntry}`}>
+          <span class={styles.roleLabel}>You</span>
+          <div class={styles.userText}>{e().text}</div>
         </div>
       </Match>
       <Match when={e().type === 'assistant'}>
-        <div class="chat-entry assistant-entry">
-          <span class="role-label">pi</span>
+        <div class={`${styles.chatEntry} ${styles.assistantEntry}`}>
+          <span class={styles.roleLabel}>pi</span>
           <AssistantMessage entry={e()} hideThinking={props.hideThinking} />
         </div>
       </Match>

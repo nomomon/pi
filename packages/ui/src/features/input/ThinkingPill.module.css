@@ -1,0 +1,107 @@
+/* Thinking pill */
+.inputThinkingPill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 32px;
+    padding: 0 10px;
+    background: var(--bg-active);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    transition: background 0.1s ease;
+    flex-shrink: 0;
+}
+
+.inputThinkingPill:hover,
+.inputThinkingPill.open {
+    background: var(--bg-hover);
+    color: var(--text);
+}
+
+.inputThinkingPill.reasoning {
+    color: var(--purple);
+}
+
+.inputThinkingPill.reasoning:hover,
+.inputThinkingPill.reasoning.open {
+    color: var(--purple);
+}
+
+.pillThinkingLabel {
+    color: inherit;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+/* Thinking dropdown */
+.inputThinkingDropdown {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.3);
+    padding: 4px;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: 40px;
+    min-width: 180px;
+    z-index: 50;
+}
+
+/* Shared dropdown row styles (duplicated from ModelPill for encapsulation) */
+.imdRow {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    gap: 8px;
+    transition: background 0.1s ease;
+}
+
+.imdRow:hover,
+.imdRow.open {
+    background: var(--bg-hover);
+}
+
+.imdRowInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.imdModelName {
+    color: var(--text);
+    font-size: 14px;
+    font-family: var(--font-sans);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.imdCheck {
+    color: var(--accent);
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.imdRow.active .imdModelName {
+    color: var(--accent);
+}
+
+.imdDefaultChip {
+    font-size: 11px;
+    font-family: var(--font-sans);
+    padding: 2px 7px;
+    border-radius: 9999px;
+    background: var(--bg-active);
+    color: var(--text-muted);
+    flex-shrink: 0;
+    margin-left: auto;
+    margin-right: 4px;
+}
