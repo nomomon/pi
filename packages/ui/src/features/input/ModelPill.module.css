@@ -2,16 +2,16 @@
 .inputModelPill {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: var(--space-1);
     height: 32px;
-    padding: 0 12px;
+    padding: 0 var(--space-3);
     background: var(--bg-active);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     color: var(--text);
     font-family: var(--font-sans);
-    font-size: 14px;
+    font-size: var(--text-base);
     transition: background 0.1s ease;
     flex-shrink: 0;
 }
@@ -32,14 +32,14 @@
 /* Model dropdown */
 .inputModelDropdown {
     background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.3);
-    padding: 4px;
+    border: var(--border-base) solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 var(--space-1) var(--space-6) rgba(0,0,0,0.5), 0 var(--border-base) var(--space-1) rgba(0,0,0,0.3);
+    padding: var(--space-1);
     max-height: 360px;
     overflow-y: auto;
     position: absolute;
-    bottom: calc(100% + 8px);
+    bottom: calc(100% + var(--space-2));
     left: 0;
     right: 0;
     z-index: 50;
@@ -51,21 +51,21 @@
 
 .inputModelDropdown::-webkit-scrollbar-thumb {
     background: var(--border);
-    border-radius: 3px;
+    border-radius: var(--radius-xs);
 }
 
 /* Model search */
 .imdSearchWrap {
-    padding: 6px 8px 4px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 4px;
+    padding: 6px var(--space-2) var(--space-1);
+    border-bottom: var(--border-base) solid var(--border);
+    margin-bottom: var(--space-1);
 }
 
 .imdSearch {
     width: 100%;
     background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: 6px;
+    border: var(--border-base) solid var(--border);
+    border-radius: var(--radius-sm);
     color: var(--text);
     font-family: var(--font-sans);
     font-size: 13px;
@@ -83,7 +83,7 @@
 }
 
 .imdLoading {
-    padding: 12px 14px;
+    padding: var(--space-3) 14px;
     color: var(--text-muted);
     font-size: 13px;
     font-family: var(--font-sans);
@@ -92,10 +92,10 @@
 .imdRow {
     display: flex;
     align-items: center;
-    padding: 10px 12px;
-    border-radius: 8px;
+    padding: 10px var(--space-3);
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    gap: 8px;
+    gap: var(--space-2);
     transition: background 0.1s ease;
 }
 
@@ -114,7 +114,7 @@
 
 .imdModelName {
     color: var(--text);
-    font-size: 14px;
+    font-size: var(--text-base);
     font-family: var(--font-sans);
     white-space: nowrap;
     overflow: hidden;
@@ -123,13 +123,13 @@
 
 .imdModelSub {
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: var(--text-sm);
     font-family: var(--font-sans);
 }
 
 .imdCheck {
     color: var(--accent);
-    font-size: 16px;
+    font-size: var(--text-md);
     flex-shrink: 0;
 }
 

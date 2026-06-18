@@ -6,9 +6,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 4px;
-    opacity: 0.5;
-    transition: opacity 0.15s;
+    padding: 0 var(--space-1);
+    opacity: var(--opacity-50);
+    transition: opacity var(--duration-base);
     cursor: pointer;
     background: none;
     border: none;
@@ -16,36 +16,36 @@
 
 .ctxIndicator:hover,
 .ctxIndicator.open {
-    opacity: 1;
+    opacity: var(--opacity-100);
 }
 
 .ctxPopup {
     position: absolute;
-    bottom: calc(100% + 8px);
+    bottom: calc(100% + var(--space-2));
     right: 0;
     width: 220px;
     background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 12px;
+    border: var(--border-base) solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px var(--space-3);
     z-index: 50;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 var(--space-1) 16px rgba(0, 0, 0, 0.4);
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-2);
 }
 
 .ctxPopupClose {
     position: absolute;
-    top: 8px;
+    top: var(--space-2);
     right: 10px;
     background: none;
     border: none;
     color: var(--text-dim);
-    font-size: 11px;
+    font-size: var(--text-xs);
     cursor: pointer;
-    padding: 2px 4px;
-    line-height: 1;
+    padding: 2px var(--space-1);
+    line-height: var(--leading-none);
 }
 
 .ctxPopupClose:hover {
@@ -55,28 +55,28 @@
 .ctxPopupBarWrap {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding-right: 16px;
+    gap: var(--space-2);
+    padding-right: var(--space-4);
 }
 
 .ctxPopupBar {
     flex: 1;
     height: 6px;
     background: var(--bg-active);
-    border-radius: 3px;
+    border-radius: var(--radius-xs);
     overflow: hidden;
 }
 
 .ctxPopupBarFill {
     height: 100%;
-    border-radius: 3px;
-    transition: width 0.3s ease;
+    border-radius: var(--radius-xs);
+    transition: width var(--duration-slow) var(--ease-default);
     min-width: 2px;
 }
 
 .ctxPopupPct {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semi);
     color: var(--text);
     min-width: 28px;
     text-align: right;
@@ -84,16 +84,16 @@
 }
 
 .ctxPopupTotal {
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--text-muted);
-    margin-top: -4px;
+    margin-top: calc(-1 * var(--space-1));
 }
 
 .ctxPopupRows {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    border-top: 1px solid var(--border);
+    gap: var(--space-1);
+    border-top: var(--border-base) solid var(--border);
     padding-top: 6px;
 }
 
@@ -112,12 +112,12 @@
 
 .ctxPopupLabel {
     flex: 1;
-    font-size: 12px;
+    font-size: var(--text-sm);
     color: var(--text-muted);
 }
 
 .ctxPopupVal {
-    font-size: 12px;
+    font-size: var(--text-sm);
     color: var(--text);
     font-variant-numeric: tabular-nums;
 }
@@ -125,8 +125,8 @@
 .ctxPopupFooter {
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--text-dim);
-    border-top: 1px solid var(--border);
+    border-top: var(--border-base) solid var(--border);
     padding-top: 6px;
 }

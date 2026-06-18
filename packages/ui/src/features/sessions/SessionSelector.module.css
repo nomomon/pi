@@ -6,13 +6,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 100;
+    z-index: var(--z-overlay);
 }
 
 .overlayPanel {
     background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
+    border: var(--border-base) solid var(--border);
+    border-radius: var(--radius-sm);
     width: 520px;
     max-width: 95vw;
     max-height: 70vh;
@@ -26,8 +26,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    font-weight: bold;
+    border-bottom: var(--border-base) solid var(--border);
+    font-weight: var(--weight-bold);
     font-size: 13px;
 }
 
@@ -36,9 +36,9 @@
     border: none;
     color: var(--text-muted);
     cursor: pointer;
-    font-size: 14px;
+    font-size: var(--text-base);
     padding: 2px 6px;
-    border-radius: 3px;
+    border-radius: var(--radius-xs);
 }
 
 .overlayClose:hover {
@@ -49,11 +49,11 @@
 .overlaySearch {
     background: var(--bg);
     border: none;
-    border-bottom: 1px solid var(--border);
+    border-bottom: var(--border-base) solid var(--border);
     color: var(--text);
     font-family: var(--font);
     font-size: 13px;
-    padding: 8px 14px;
+    padding: var(--space-2) 14px;
     outline: none;
     width: 100%;
 }
@@ -73,23 +73,23 @@
 
 .overlayLoading,
 .overlayEmpty {
-    padding: 20px;
+    padding: var(--space-5);
     text-align: center;
     color: var(--text-dim);
-    font-size: 12px;
+    font-size: var(--text-sm);
 }
 
 .sessionItem {
     display: flex;
     align-items: baseline;
-    gap: 8px;
-    padding: 8px 14px;
+    gap: var(--space-2);
+    padding: var(--space-2) 14px;
     background: none;
     border: none;
-    border-bottom: 1px solid var(--border);
+    border-bottom: var(--border-base) solid var(--border);
     color: var(--text);
     font-family: var(--font);
-    font-size: 12px;
+    font-size: var(--text-sm);
     cursor: pointer;
     width: 100%;
     text-align: left;
@@ -109,31 +109,31 @@
 
 .newSessionBtn {
     color: var(--accent);
-    font-weight: bold;
+    font-weight: var(--weight-bold);
 }
 
 .sessionItemHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
     width: 100%;
 }
 
 .sessionItemName {
-    font-weight: bold;
+    font-weight: var(--weight-bold);
     flex: 1;
 }
 
 .sessionItemDate {
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--text-muted);
     flex-shrink: 0;
 }
 
 .sessionItemPreview {
     display: block;
-    font-size: 12px;
+    font-size: var(--text-sm);
     color: var(--text-muted);
     margin-top: 2px;
     overflow: hidden;
@@ -143,7 +143,7 @@
 
 .sessionItemMeta {
     display: block;
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--text-muted);
     margin-top: 2px;
     opacity: 0.7;

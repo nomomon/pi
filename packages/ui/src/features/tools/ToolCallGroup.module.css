@@ -11,16 +11,16 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 4px 12px 4px 8px;
+    padding: var(--space-1) var(--space-3) var(--space-1) var(--space-2);
     background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 100px;
+    border: var(--border-base) solid var(--border);
+    border-radius: var(--radius-full);
     color: var(--text-muted);
     font-family: var(--font-sans);
-    font-size: 12px;
+    font-size: var(--text-sm);
     cursor: pointer;
     text-align: left;
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    transition: background var(--duration-base) var(--ease-default), color var(--duration-base) var(--ease-default), border-color var(--duration-base) var(--ease-default);
 }
 
 .stepGroupHeader:hover {
@@ -37,7 +37,7 @@
 /* ===== Timeline collapse (CSS grid animation) ===== */
 .timelineCollapse {
     display: grid;
-    transition: grid-template-rows 300ms ease-out;
+    transition: grid-template-rows var(--duration-slow) ease-out;
     width: 100%;
 }
 
@@ -62,11 +62,11 @@
 /* Spacer rows: 8px, contains the spine segment */
 .tlSpacer {
     display: flex;
-    height: 8px;
+    height: var(--space-2);
 }
 
 .tlIconCol {
-    width: 20px;
+    width: var(--space-5);
     flex-shrink: 0;
     display: flex;
     justify-content: center;
@@ -82,13 +82,13 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 1px;
+    width: var(--border-base);
     background: var(--border);
 }
 
 .tlIconCol .tlIcon {
     position: relative;
-    z-index: 1;
+    z-index: var(--z-raised);
     background: var(--bg);
     border-radius: 2px;
 }
@@ -150,7 +150,7 @@
 }
 
 .tlContent {
-    line-height: 1;
+    line-height: var(--leading-none);
 }
 
 /* Label button */
@@ -162,7 +162,7 @@
     border: none;
     color: var(--text-dim);
     font-family: var(--font-sans);
-    font-size: 12px;
+    font-size: var(--text-sm);
     cursor: pointer;
     text-align: left;
     padding: 0;
@@ -193,14 +193,14 @@
 
 .tlLabelVerb {
     color: var(--text-dim);
-    margin-right: 4px;
+    margin-right: var(--space-1);
 }
 
 .tlLabelInline {
     width: auto;
     flex-grow: 0;
     font-family: var(--font-sans);
-    font-size: 12px;
+    font-size: var(--text-sm);
 }
 
 /* Thinking block fade */
@@ -211,16 +211,16 @@
 
 .tlThinkingText {
     font-family: var(--font);
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--text-dim);
     white-space: pre-wrap;
     word-break: break-word;
-    line-height: 1.5;
-    max-height: calc(11px * 1.5 * 2.5); /* 2.5 lines */
+    line-height: var(--leading-normal);
+    max-height: calc(var(--text-xs) * 1.5 * 2.5); /* 2.5 lines */
     overflow: hidden;
     -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-    transition: max-height 0.3s ease, -webkit-mask-image 0.3s ease, mask-image 0.3s ease;
+    transition: max-height var(--duration-slow) var(--ease-default), -webkit-mask-image var(--duration-slow) var(--ease-default), mask-image var(--duration-slow) var(--ease-default);
 }
 
 .tlThinkingTextShort {
@@ -240,7 +240,7 @@
     border: none;
     color: var(--text-dim);
     font-family: var(--font-sans);
-    font-size: 11px;
+    font-size: var(--text-xs);
     cursor: pointer;
     padding: 2px 0 0;
     display: block;
@@ -258,18 +258,18 @@
 /* Inline code fragment in labels (e.g. Ran `command`) */
 .tlLabelCode {
     font-family: var(--font);
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--text-muted);
     background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 0 4px;
+    border: var(--border-base) solid var(--border);
+    border-radius: var(--radius-xs);
+    padding: 0 var(--space-1);
 }
 
 .tlLabelDone {
     color: var(--text-dim);
     font-family: var(--font-sans);
-    font-size: 12px;
+    font-size: var(--text-sm);
 }
 
 /* Detail collapse: same grid trick as timeline-collapse */
@@ -297,7 +297,7 @@
 .tlDetailContent {
     flex: 1;
     min-width: 0;
-    padding: 4px 0 6px 8px;
+    padding: var(--space-1) 0 6px var(--space-2);
 }
 
 /* Expanded detail sections */
@@ -313,21 +313,21 @@
     font-size: 10px;
     color: var(--text-dim);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: var(--tracking-wide);
     margin-bottom: 3px;
     font-family: var(--font-sans);
 }
 
 .timelineDetailCode {
     font-family: var(--font);
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--text-muted);
     white-space: pre-wrap;
     word-break: break-all;
     background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 6px 8px;
+    border: var(--border-base) solid var(--border);
+    border-radius: var(--radius-xs);
+    padding: 6px var(--space-2);
     max-height: 300px;
     overflow-y: auto;
     margin: 0;
@@ -340,12 +340,12 @@
 .timelineDetailDim {
     color: var(--text-dim);
     font-family: var(--font-sans);
-    font-size: 12px;
+    font-size: var(--text-sm);
 }
 
 .timelineBashExit {
     color: var(--red);
-    font-size: 11px;
+    font-size: var(--text-xs);
 }
 
 /* Spine termination: no segment above first node or below last */

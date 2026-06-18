@@ -3,7 +3,7 @@
 }
 
 .usageLine {
-    font-size: 11px;
+    font-size: var(--text-xs);
     color: var(--text-dim);
     margin-top: 6px;
 }
@@ -13,9 +13,9 @@
 }
 
 .thinkingBlock {
-    margin-bottom: 8px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
+    margin-bottom: var(--space-2);
+    border: var(--border-base) solid var(--border);
+    border-radius: var(--radius-xs);
     overflow: hidden;
 }
 
@@ -23,12 +23,12 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 8px;
+    padding: var(--space-1) var(--space-2);
     background: var(--bg-surface);
     border: none;
     color: var(--purple);
     font-family: var(--font);
-    font-size: 12px;
+    font-size: var(--text-sm);
     cursor: pointer;
     width: 100%;
     text-align: left;
@@ -48,14 +48,14 @@
 }
 
 .thinkingBody {
-    padding: 8px;
-    border-top: 1px solid var(--border);
+    padding: var(--space-2);
+    border-top: var(--border-base) solid var(--border);
     background: var(--bg);
 }
 
 .thinkingText {
     font-family: var(--font);
-    font-size: 12px;
+    font-size: var(--text-sm);
     color: var(--text-muted);
     white-space: pre-wrap;
     word-break: break-word;
@@ -69,7 +69,7 @@
 }
 
 .markdownBody p {
-    margin: 0 0 8px;
+    margin: 0 0 var(--space-2);
 }
 
 .markdownBody p:last-child {
@@ -82,7 +82,7 @@
 .markdownBody h4,
 .markdownBody h5,
 .markdownBody h6 {
-    margin: 12px 0 6px;
+    margin: var(--space-3) 0 6px;
     color: var(--text);
 }
 
@@ -100,9 +100,9 @@
 
 .markdownBody code {
     background: var(--bg-surface);
-    border: 1px solid var(--border);
-    padding: 1px 4px;
-    border-radius: 3px;
+    border: var(--border-base) solid var(--border);
+    padding: 1px var(--space-1);
+    border-radius: var(--radius-xs);
     font-family: var(--font);
     font-size: 0.9em;
     color: var(--orange);
@@ -110,9 +110,9 @@
 
 .markdownBody pre {
     background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 10px 12px;
+    border: var(--border-base) solid var(--border);
+    border-radius: var(--radius-xs);
+    padding: 10px var(--space-3);
     overflow-x: auto;
     margin: 6px 0;
 }
@@ -122,13 +122,13 @@
     border: none;
     padding: 0;
     color: var(--text);
-    font-size: 12px;
+    font-size: var(--text-sm);
 }
 
 .markdownBody ul,
 .markdownBody ol {
-    padding-left: 20px;
-    margin: 4px 0 8px;
+    padding-left: var(--space-5);
+    margin: var(--space-1) 0 var(--space-2);
 }
 
 .markdownBody li {
@@ -136,8 +136,8 @@
 }
 
 .markdownBody blockquote {
-    border-left: 3px solid var(--border);
-    padding-left: 12px;
+    border-left: var(--border-md) solid var(--border);
+    padding-left: var(--space-3);
     color: var(--text-muted);
     margin: 6px 0;
 }
@@ -153,21 +153,21 @@
 
 .markdownBody hr {
     border: none;
-    border-top: 1px solid var(--border);
+    border-top: var(--border-base) solid var(--border);
     margin: 10px 0;
 }
 
 .markdownBody table {
     border-collapse: collapse;
     width: 100%;
-    margin: 8px 0;
-    font-size: 12px;
+    margin: var(--space-2) 0;
+    font-size: var(--text-sm);
 }
 
 .markdownBody th,
 .markdownBody td {
-    border: 1px solid var(--border);
-    padding: 4px 8px;
+    border: var(--border-base) solid var(--border);
+    padding: var(--space-1) var(--space-2);
 }
 
 .markdownBody th {

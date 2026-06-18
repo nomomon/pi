@@ -1,12 +1,12 @@
 /* Slash suggestions */
 .slashSuggestionsWrap {
     overflow: hidden;
-    border-radius: 12px 12px 0 0;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
     margin: -14px -14px 0;
 }
 
 .slashSuggestions {
-    border-bottom: 1px solid var(--border);
+    border-bottom: var(--border-base) solid var(--border);
     background: var(--bg-surface);
     max-height: 240px;
     overflow-y: auto;
@@ -18,7 +18,7 @@
     gap: 10px;
     padding: 6px 14px;
     cursor: pointer;
-    border-bottom: 1px solid var(--border);
+    border-bottom: var(--border-base) solid var(--border);
 }
 
 .slashSuggestion:last-child {
@@ -31,27 +31,27 @@
 }
 
 .slashSuggestion.selected {
-    border-left: 2px solid var(--accent);
-    padding-left: 12px;
+    border-left: var(--border-md) solid var(--accent);
+    padding-left: var(--space-3);
 }
 
 .suggestionName {
     color: var(--accent);
-    font-weight: bold;
+    font-weight: var(--weight-bold);
     min-width: 100px;
 }
 
 .suggestionDesc {
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: var(--text-sm);
     flex: 1;
 }
 
 .suggestionSource {
     font-size: 10px;
     padding: 1px 5px;
-    border-radius: 3px;
-    border: 1px solid;
+    border-radius: var(--radius-xs);
+    border: var(--border-base) solid;
 }
 
 .source_extension {

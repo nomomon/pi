@@ -1,11 +1,11 @@
 .footer {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 4px 16px;
-    border-top: 1px solid var(--border);
+    gap: var(--space-3);
+    padding: var(--space-1) var(--space-4);
+    border-top: var(--border-base) solid var(--border);
     background: var(--bg);
-    font-size: 11px;
+    font-size: var(--text-xs);
     font-family: var(--font-sans);
     color: var(--text-dim);
     flex-shrink: 0;
@@ -35,11 +35,11 @@
 
 .footerRenameInput {
     background: var(--bg);
-    border: 1px solid var(--accent);
-    border-radius: 3px;
+    border: var(--border-base) solid var(--accent);
+    border-radius: var(--radius-xs);
     color: var(--text);
     font-family: var(--font);
-    font-size: 11px;
+    font-size: var(--text-xs);
     padding: 2px 6px;
     outline: none;
     margin-left: auto;
