@@ -1,4 +1,4 @@
-import type { ChatEntry } from '../../types'
+import type { ChatEntry } from '@/types'
 import styles from './BashExecution.module.css'
 
 export default function BashExecution(props: { entry: ChatEntry }) {

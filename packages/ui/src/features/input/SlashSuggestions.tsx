@@ -1,5 +1,5 @@
 import { For } from 'solid-js'
-import type { RpcSlashCommand } from '../../types'
+import type { RpcSlashCommand } from '@/types'
 import styles from './SlashSuggestions.module.css'
 
 interface Props {

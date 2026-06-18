@@ -1,8 +1,8 @@
 import { For, Show, createEffect, createMemo, createSignal, Switch, Match } from 'solid-js'
-import { state } from '../../store'
-import type { ChatEntry } from '../../types'
+import { state } from '@/store'
+import type { ChatEntry } from '@/types'
 import AssistantMessage from './AssistantMessage'
-import StepGroup from '../tools/ToolCallGroup'
+import StepGroup from '@/features/tools/ToolCallGroup'
 import styles from './ChatView.module.css'
 
 type GroupedEntry =

@@ -1,6 +1,6 @@
 import { For, Show, Switch, Match, createSignal, onMount } from 'solid-js'
 import { ChevronDown, ChevronRight, CheckCircle2, XCircle, Loader2, TerminalSquare, FilePlus, FileText, FilePen, Search, FolderOpen, Wrench, ClockFading } from 'lucide-solid'
-import type { ChatEntry } from '../../types'
+import type { ChatEntry } from '@/types'
 import styles from './ToolCallGroup.module.css'
 
 function n(count: number, singular: string, plural: string): string {

@@ -1,7 +1,7 @@
 import { For, Show, createSignal } from 'solid-js'
 import { ChevronDown, ChevronRight } from 'lucide-solid'
 import { parse } from 'marked'
-import type { ChatEntry, ThinkingContent } from '../../types'
+import type { ChatEntry, ThinkingContent } from '@/types'
 import styles from './AssistantMessage.module.css'
 
 interface Props {

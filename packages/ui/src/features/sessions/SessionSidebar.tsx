@@ -1,6 +1,6 @@
 import { createSignal, createEffect, For, Show, onMount, onCleanup } from 'solid-js'
-import { state, showNotification } from '../../store'
-import { sendCommand, reloadSession, openInWorkspace } from '../../ws'
+import { state, showNotification } from '@/store'
+import { sendCommand, reloadSession, openInWorkspace } from '@/ws'
 import styles from './SessionSidebar.module.css'
 
 interface SessionItem {
