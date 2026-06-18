@@ -85,3 +85,13 @@
     text-align: center;
     font-family: var(--font-sans);
 }
+
+@media (max-width: 768px) {
+    .chatView {
+        padding: var(--space-3) var(--space-3);
+    }
+
+    .userEntry {
+        max-width: 92%;
+    }
+}

@@ -110,6 +110,56 @@
     color: var(--red);
 }
 
+/* Hamburger button — hidden on desktop, shown on mobile */
+.menuBtn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: var(--space-1);
+    border-radius: var(--radius-xs);
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.menuBtn:hover {
+    color: var(--text);
+    background: var(--bg-hover);
+}
+
+/* Sidebar backdrop — mobile only */
+.sidebarBackdrop {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .menuBtn {
+        display: flex;
+    }
+
+    .sessionName {
+        max-width: 45vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .notification {
+        bottom: var(--space-4);
+        right: var(--space-3);
+    }
+
+    .sidebarBackdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 199;
+        background: rgba(0, 0, 0, 0.5);
+    }
+}
+
 @keyframes fadeIn {
     from {
         opacity: var(--opacity-0);

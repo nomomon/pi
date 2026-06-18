@@ -105,3 +105,22 @@
 .inputSendBtn.aborting {
     background: var(--red);
 }
+
+@media (max-width: 768px) {
+    .inputArea {
+        padding: 0 var(--space-1) var(--space-3);
+    }
+
+    .inputCard {
+        padding: var(--space-3);
+    }
+
+    .inputTextarea {
+        max-height: 240px;
+    }
+
+    .inputToolbar {
+        flex-wrap: wrap;
+        gap: var(--space-1);
+    }
+}

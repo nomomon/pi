@@ -34,7 +34,12 @@ function shortPath(cwd: string): string {
   return parts.length > 2 ? '…/' + parts.slice(-2).join('/') : cwd
 }
 
-export default function SessionSidebar() {
+interface SessionSidebarProps {
+  isOpen: boolean
+  onClose: () => void
+}
+
+export default function SessionSidebar(props: SessionSidebarProps) {
   const [groups, setGroups] = createSignal<WorkspaceGroup[]>([])
   const [renamingPath, setRenamingPath] = createSignal<string | null>(null)
   const [renameValue, setRenameValue] = createSignal('')
@@ -90,6 +95,7 @@ export default function SessionSidebar() {
 
   async function openSession(s: SessionItem) {
     setMenuState(null)
+    props.onClose()
     openInWorkspace(s.path, s.cwd || '')
   }
 
@@ -139,7 +145,7 @@ export default function SessionSidebar() {
   }
 
   return (
-    <aside class={styles.sessionSidebar}>
+    <aside class={`${styles.sessionSidebar}${props.isOpen ? ' ' + styles.open : ''}`}>
       <div class={styles.sidebarHeader}>
         <span class={styles.sidebarTitle}>Sessions</span>
         <button class={styles.sidebarNewBtn} title="New session" onClick={async (e) => {
