@@ -53,7 +53,9 @@ COPY packages/ui/server.ts packages/ui/
 RUN npm run build --workspace=packages/ui \
   # Allow pi user to read the built app and run server.ts
   && chown -R pi:pi /app/packages/ui/dist \
-  && chown pi:pi /app/packages/ui/server.ts
+  && chown pi:pi /app/packages/ui/server.ts \
+  # Symlink pi binary into PATH
+  && ln -s /app/packages/coding-agent/dist/cli.js /usr/local/bin/pi
 
 WORKDIR /app/packages/ui
 USER pi
