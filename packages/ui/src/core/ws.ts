@@ -319,7 +319,7 @@ function handleAgentEvent(event: AgentEvent) {
 		}
 
 		case "tool_execution_end": {
-			const { toolCallId, result, isError } = event;
+			const { toolCallId, toolName, result, isError } = event;
 			setState(
 				produce((s) => {
 					if (s.toolExecutions[toolCallId]) {
@@ -334,6 +334,39 @@ function handleAgentEvent(event: AgentEvent) {
 				e.toolResult = result;
 				e.toolIsError = isError;
 			});
+
+			const getResultText = (r: any): string => {
+				if (typeof r === "string") return r;
+				if (Array.isArray(r)) return r.map((c: any) => c?.text ?? "").join("");
+				return JSON.stringify(r);
+			};
+
+			if (toolName === "visualize:show_widget" && !isError) {
+				try {
+					const data = JSON.parse(getResultText(result));
+					if (data.widget_code) {
+						addMessage({
+							id: `widget_${toolCallId}`,
+							type: "widget",
+							timestamp: Date.now(),
+							widgetTitle: data.title,
+							widgetCode: data.widget_code,
+						});
+					}
+				} catch {}
+			} else if (toolName === "present_files" && !isError) {
+				try {
+					const data = JSON.parse(getResultText(result));
+					if (data.files?.length) {
+						addMessage({
+							id: `files_${toolCallId}`,
+							type: "files",
+							timestamp: Date.now(),
+							presentedFiles: data.files,
+						});
+					}
+				} catch {}
+			}
 			break;
 		}
 
@@ -436,5 +469,35 @@ function processHistoricalMessage(msg: any) {
 			toolIsError: msg.isError,
 			toolIsRunning: false,
 		});
+
+		if (!msg.isError) {
+			const resultText = msg.content?.map((c: any) => c.text).join("") ?? "";
+			if (msg.toolName === "visualize:show_widget") {
+				try {
+					const data = JSON.parse(resultText);
+					if (data.widget_code) {
+						addMessage({
+							id: `widget_${msg.toolCallId}`,
+							type: "widget",
+							timestamp: msg.timestamp,
+							widgetTitle: data.title,
+							widgetCode: data.widget_code,
+						});
+					}
+				} catch {}
+			} else if (msg.toolName === "present_files") {
+				try {
+					const data = JSON.parse(resultText);
+					if (data.files?.length) {
+						addMessage({
+							id: `files_${msg.toolCallId}`,
+							type: "files",
+							timestamp: msg.timestamp,
+							presentedFiles: data.files,
+						});
+					}
+				} catch {}
+			}
+		}
 	}
 }

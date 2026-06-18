@@ -22,20 +22,22 @@ function isAuthorized(req: { headers: Record<string, string | string[] | undefin
 
 // Resolve pi binary
 function resolvePiBinary(): { cmd: string; args: string[] } {
+  const uiToolsPath = join(__dirname, 'ui-tools', 'index.ts')
+
   // 1. PI_BINARY env var
   if (process.env.PI_BINARY) {
-    return { cmd: process.env.PI_BINARY, args: ['--mode', 'rpc'] }
+    return { cmd: process.env.PI_BINARY, args: ['--mode', 'rpc', '-e', uiToolsPath] }
   }
 
   // 2. monorepo local build: packages/coding-agent/dist/cli.js (2 dirs up from server.ts)
   const monorepoRoot = join(__dirname, '..', '..')
   const localBin = join(monorepoRoot, 'packages', 'coding-agent', 'dist', 'cli.js')
   if (existsSync(localBin)) {
-    return { cmd: 'node', args: [localBin, '--mode', 'rpc'] }
+    return { cmd: 'node', args: [localBin, '--mode', 'rpc', '-e', uiToolsPath] }
   }
 
   // 3. pi in PATH
-  return { cmd: 'pi', args: ['--mode', 'rpc'] }
+  return { cmd: 'pi', args: ['--mode', 'rpc', '-e', uiToolsPath] }
 }
 
 const MIME_TYPES: Record<string, string> = {

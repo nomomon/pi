@@ -126,7 +126,7 @@ export interface RpcSlashCommand {
 
 export interface ChatEntry {
 	id: string;
-	type: "user" | "assistant" | "tool_execution" | "bash" | "compaction" | "system";
+	type: "user" | "assistant" | "tool_execution" | "bash" | "compaction" | "system" | "widget" | "files";
 	timestamp: number;
 	// user
 	text?: string;
@@ -154,4 +154,15 @@ export interface ChatEntry {
 	bashTruncated?: boolean;
 	// compaction / system
 	message?: string;
+	// widget (from visualize:show_widget)
+	widgetTitle?: string;
+	widgetCode?: string;
+	// files (from present_files)
+	presentedFiles?: Array<{
+		name: string;
+		path: string;
+		content_base64: string;
+		mime_type: string;
+		size: number;
+	}>;
 }

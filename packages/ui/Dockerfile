@@ -50,11 +50,13 @@ COPY packages/ui/index.html packages/ui/
 COPY packages/ui/vite.config.ts packages/ui/
 COPY packages/ui/tsconfig*.json packages/ui/
 COPY packages/ui/server.ts packages/ui/
+COPY packages/ui/ui-tools packages/ui/ui-tools
 
 RUN npm run build --workspace=packages/ui \
   # Allow pi user to read the built app and run server.ts
   && chown -R pi:pi /app/packages/ui/dist \
   && chown pi:pi /app/packages/ui/server.ts \
+  && chown -R pi:pi /app/packages/ui/ui-tools \
   # Symlink pi binary into PATH
   && ln -s /app/packages/coding-agent/dist/cli.js /usr/local/bin/pi
 

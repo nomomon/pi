@@ -4,6 +4,8 @@ import { state } from '@/core/store'
 import type { ChatEntry } from '@/core/types'
 import AssistantMessage from './AssistantMessage'
 import StepGroup from '@/features/tools/ToolCallGroup'
+import WidgetDisplay from '@/features/tools/WidgetDisplay'
+import FilePresentation from '@/features/tools/FilePresentation'
 import styles from './ChatView.module.css'
 
 type GroupedEntry =
@@ -53,6 +55,9 @@ export default function ChatView() {
           flushStep()
           result.push({ id: `msg:${entry.id}`, kind: 'message', entry, hideThinking: hasThinking })
         }
+      } else if (entry.type === 'widget' || entry.type === 'files') {
+        flushStep()
+        result.push({ id: `msg:${entry.id}`, kind: 'message', entry, hideThinking: false })
       } else {
         // tool_execution, bash, compaction, system
         step.push(entry)
@@ -111,6 +116,16 @@ function MessageRenderer(props: { entry: ChatEntry; hideThinking: boolean }) {
         <div class={`${styles.chatEntry} ${styles.assistantEntry}`}>
           <span class={styles.roleLabel}>pi</span>
           <AssistantMessage entry={e()} hideThinking={props.hideThinking} />
+        </div>
+      </Match>
+      <Match when={e().type === 'widget'}>
+        <div class={styles.chatEntry}>
+          <WidgetDisplay title={e().widgetTitle ?? ''} code={e().widgetCode ?? ''} />
+        </div>
+      </Match>
+      <Match when={e().type === 'files'}>
+        <div class={styles.chatEntry}>
+          <FilePresentation files={e().presentedFiles ?? []} />
         </div>
       </Match>
     </Switch>
