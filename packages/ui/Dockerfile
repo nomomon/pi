@@ -45,6 +45,7 @@ RUN npm run build --workspace=packages/coding-agent
 
 # Build the UI
 COPY packages/ui/src packages/ui/src
+COPY packages/ui/public packages/ui/public
 COPY packages/ui/index.html packages/ui/
 COPY packages/ui/vite.config.ts packages/ui/
 COPY packages/ui/tsconfig*.json packages/ui/

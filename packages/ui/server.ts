@@ -44,6 +44,8 @@ const MIME_TYPES: Record<string, string> = {
   '.css': 'text/css',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.webmanifest': 'application/manifest+json',
   '.json': 'application/json',
   '.woff': 'font/woff',
   '.woff2': 'font/woff2',
