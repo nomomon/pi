@@ -157,6 +157,7 @@ export interface ChatEntry {
 	// widget (from visualize:show_widget)
 	widgetTitle?: string;
 	widgetCode?: string;
+	widgetIsStreaming?: boolean;
 	// files (from present_files)
 	presentedFiles?: Array<{
 		name: string;

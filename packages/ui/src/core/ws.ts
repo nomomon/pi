@@ -8,6 +8,35 @@ let idCounter = 0;
 let cwdOverride: string | null = null;
 let pendingSessionPath: string | null = null;
 
+// Track tool call IDs that already have a streaming widget entry so we
+// know to updateMessage instead of addMessage when the tool finishes.
+const streamingWidgetIds = new Set<string>();
+
+function extractStreamingSvg(argsStr: string): string | null {
+	const svgStart = argsStr.indexOf("<svg");
+	if (svgStart === -1) return null;
+	const raw = argsStr.slice(svgStart);
+	// Don't render until viewBox is present (ensures correct dimensions/styling)
+	if (!raw.includes("viewBox")) return null;
+	// Don't render until we have at least one complete closing tag
+	const closeIdx = raw.lastIndexOf("</svg>");
+	if (closeIdx === -1) return null;
+	const svgRaw = raw.slice(0, closeIdx + 6);
+	// Unescape JSON string encoding
+	return svgRaw
+		.replace(/\\"/g, '"')
+		.replace(/\\n/g, "\n")
+		.replace(/\\r/g, "\r")
+		.replace(/\\t/g, "\t")
+		.replace(/\\\\/g, "\\");
+}
+
+function extractJsonStringField(argsStr: string, field: string): string | null {
+	const re = new RegExp(`"${field}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`);
+	const m = argsStr.match(re);
+	return m ? m[1] : null;
+}
+
 function genId() {
 	return `cmd_${++idCounter}`;
 }
@@ -246,6 +275,31 @@ function handleAgentEvent(event: AgentEvent) {
 					e.toolCalls = toolCalls;
 					e.isPartial = true;
 				});
+
+				// Stream SVG widgets as the LLM generates the tool call arguments
+				for (const tc of toolCalls) {
+					if (tc.name !== "visualize_show_widget") continue;
+					const argsStr = typeof tc.arguments === "string" ? tc.arguments : JSON.stringify(tc.arguments ?? {});
+					const partialSvg = extractStreamingSvg(argsStr);
+					if (!partialSvg) continue;
+					const widgetId = `widget_${tc.id}`;
+					if (!streamingWidgetIds.has(tc.id)) {
+						streamingWidgetIds.add(tc.id);
+						const rawTitle = extractJsonStringField(argsStr, "title");
+						addMessage({
+							id: widgetId,
+							type: "widget",
+							timestamp: Date.now(),
+							widgetTitle: rawTitle ?? "",
+							widgetCode: partialSvg,
+							widgetIsStreaming: true,
+						});
+					} else {
+						updateMessage(widgetId, (e) => {
+							e.widgetCode = partialSvg;
+						});
+					}
+				}
 			}
 			break;
 		}
@@ -346,13 +400,25 @@ function handleAgentEvent(event: AgentEvent) {
 				try {
 					const data = JSON.parse(getResultText(result));
 					if (data.widget_code) {
-						addMessage({
-							id: `widget_${toolCallId}`,
-							type: "widget",
-							timestamp: Date.now(),
-							widgetTitle: data.title,
-							widgetCode: data.widget_code,
-						});
+						if (streamingWidgetIds.has(toolCallId)) {
+							// Already have a streaming entry — update it to the final authoritative code
+							streamingWidgetIds.delete(toolCallId);
+							updateMessage(`widget_${toolCallId}`, (e) => {
+								if (e.widgetCode !== data.widget_code) e.widgetCode = data.widget_code;
+								e.widgetTitle = data.title;
+								e.widgetIsStreaming = false;
+							});
+						} else {
+							// No streaming entry (e.g. HTML mode) — add fresh
+							addMessage({
+								id: `widget_${toolCallId}`,
+								type: "widget",
+								timestamp: Date.now(),
+								widgetTitle: data.title,
+								widgetCode: data.widget_code,
+								widgetIsStreaming: false,
+							});
+						}
 					}
 				} catch {}
 			} else if (toolName === "present_files" && !isError) {

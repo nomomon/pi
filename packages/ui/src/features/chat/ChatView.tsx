@@ -120,7 +120,7 @@ function MessageRenderer(props: { entry: ChatEntry; hideThinking: boolean }) {
       </Match>
       <Match when={e().type === 'widget'}>
         <div class={styles.chatEntry}>
-          <WidgetDisplay title={e().widgetTitle ?? ''} code={e().widgetCode ?? ''} />
+          <WidgetDisplay title={e().widgetTitle ?? ''} code={e().widgetCode ?? ''} isStreaming={e().widgetIsStreaming} />
         </div>
       </Match>
       <Match when={e().type === 'files'}>

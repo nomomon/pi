@@ -1,19 +1,44 @@
-import { onCleanup } from 'solid-js'
+import { createEffect, createSignal, onCleanup } from 'solid-js'
 import { send } from '@/core/ws'
 import styles from './WidgetDisplay.module.css'
 
 interface Props {
   title: string
   code: string
+  isStreaming?: boolean
 }
 
 export default function WidgetDisplay(props: Props) {
-  const isSvg = () => props.code.trimStart().startsWith('<svg')
+  // Throttle DOM writes to one per animation frame while streaming.
+  // When streaming ends, flush the final code immediately.
+  const [displayCode, setDisplayCode] = createSignal(props.code)
+  let rafId: number | undefined
+
+  createEffect(() => {
+    const next = props.code
+    const streaming = props.isStreaming ?? false
+
+    if (!streaming) {
+      if (rafId !== undefined) { cancelAnimationFrame(rafId); rafId = undefined }
+      setDisplayCode(next)
+      return
+    }
+
+    if (rafId !== undefined) return // already a frame queued; it will read latest props.code
+    rafId = requestAnimationFrame(() => {
+      setDisplayCode(props.code)
+      rafId = undefined
+    })
+  })
+
+  onCleanup(() => { if (rafId !== undefined) cancelAnimationFrame(rafId) })
+
+  const isSvg = () => displayCode().trimStart().startsWith('<svg')
 
   function handleDownload() {
     const ext = isSvg() ? 'svg' : 'html'
     const mime = isSvg() ? 'image/svg+xml' : 'text/html'
-    const blob = new Blob([props.code], { type: mime })
+    const blob = new Blob([displayCode()], { type: mime })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -46,11 +71,11 @@ export default function WidgetDisplay(props: Props) {
         </button>
       </div>
       {isSvg() ? (
-        <div class={styles.widgetSvg} innerHTML={props.code} />
+        <div class={styles.widgetSvg} innerHTML={displayCode()} />
       ) : (
         <iframe
           class={styles.widgetIframe}
-          srcdoc={buildSrcdoc(props.code)}
+          srcdoc={buildSrcdoc(displayCode())}
           sandbox="allow-scripts"
           title={props.title}
         />
