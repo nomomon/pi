@@ -8,7 +8,7 @@ RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --ignore-scripts
+RUN npm install --ignore-scripts
 COPY . .
 RUN npm run build
 

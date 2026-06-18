@@ -9,6 +9,16 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const PORT = parseInt(process.env.PORT ?? '3030')
 const WORKING_DIR = process.env.CWD ?? process.cwd()
 const IS_DEV = process.env.NODE_ENV !== 'production'
+const UI_TOKEN = process.env.UI_TOKEN
+
+function isAuthorized(req: { headers: Record<string, string | string[] | undefined> }): boolean {
+  if (!UI_TOKEN) return true
+  const auth = req.headers['authorization']
+  if (typeof auth !== 'string' || !auth.startsWith('Basic ')) return false
+  const decoded = Buffer.from(auth.slice(6), 'base64').toString()
+  const [, pass] = decoded.split(':')
+  return pass === UI_TOKEN
+}
 
 // Resolve pi binary
 function resolvePiBinary(): { cmd: string; args: string[] } {
@@ -40,6 +50,12 @@ const MIME_TYPES: Record<string, string> = {
 }
 
 const server = createServer((req, res) => {
+  if (!isAuthorized(req)) {
+    res.writeHead(401, { 'WWW-Authenticate': 'Basic realm="pi"' })
+    res.end()
+    return
+  }
+
   if (IS_DEV) {
     res.writeHead(302, { Location: 'http://localhost:5173' + (req.url ?? '/') })
     res.end()
@@ -66,6 +82,11 @@ const server = createServer((req, res) => {
 const wss = new WebSocketServer({ server, path: '/ws' })
 
 wss.on('connection', (ws, req) => {
+  if (!isAuthorized(req)) {
+    ws.close(1008, 'Unauthorized')
+    return
+  }
+
   const url = new URL(req.url!, `http://localhost:${PORT}`)
   const cwd = url.searchParams.get('cwd') ?? WORKING_DIR
 
