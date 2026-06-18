@@ -513,7 +513,6 @@ export default function InputArea() {
             title="Select model"
           >
             <span class="pill-model-name">{modelDisplayName()}</span>
-            <span class="pill-chevron">▾</span>
           </button>
 
           <Show when={modelSupportsReasoning()}>
@@ -532,7 +531,6 @@ export default function InputArea() {
               title="Set thinking level"
             >
               <span class="pill-thinking-label">{thinkingDisplay()}</span>
-              <span class="pill-chevron">▾</span>
             </button>
           </Show>
 

@@ -1177,12 +1177,6 @@ body {
     text-overflow: ellipsis;
 }
 
-.pill-chevron {
-    font-size: 11px;
-    color: var(--text-dim);
-    margin-left: 2px;
-}
-
 /* Thinking pill */
 .input-thinking-pill {
     display: flex;
