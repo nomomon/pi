@@ -49,11 +49,12 @@ const MIME_TYPES: Record<string, string> = {
   '.woff2': 'font/woff2',
 }
 
-// PWA assets must be publicly accessible — browsers fetch them without credentials
-const PUBLIC_PATHS = new Set(['/manifest.webmanifest', '/pwa-icon.svg', '/favicon.ico'])
+// Icons/SW are fetched without credentials (OS home screen, SW registration)
+// Manifest is fetched with credentials via crossorigin="use-credentials" (useCredentials: true in vite-plugin-pwa)
+const PUBLIC_PATHS = new Set(['/pwa-icon.svg', '/favicon.ico', '/sw.js', '/registerSW.js'])
 function isPublicPath(url: string): boolean {
   const path = url.split('?')[0]
-  return PUBLIC_PATHS.has(path) || path.startsWith('/pwa-') || path.startsWith('/apple-touch-icon') || path.startsWith('/maskable-icon')
+  return PUBLIC_PATHS.has(path) || path.startsWith('/pwa-') || path.startsWith('/apple-touch-icon') || path.startsWith('/maskable-icon') || path.startsWith('/workbox-')
 }
 
 const server = createServer((req, res) => {

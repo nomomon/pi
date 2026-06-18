@@ -8,6 +8,7 @@ export default defineConfig({
     solidPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
+      useCredentials: true,
       manifest: {
         name: 'pi',
         short_name: 'pi',
