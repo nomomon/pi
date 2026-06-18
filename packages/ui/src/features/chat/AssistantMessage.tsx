@@ -3,6 +3,7 @@ import { ChevronDown, ChevronRight } from 'lucide-solid'
 import { parse } from 'marked'
 import type { ChatEntry, ThinkingContent } from '@/core/types'
 import styles from './AssistantMessage.module.css'
+import mdStyles from '@/css/markdown.module.css'
 
 interface Props {
   entry: ChatEntry
@@ -69,5 +70,5 @@ function TextBlock(props: { text: string }) {
       return `<pre>${props.text}</pre>`
     }
   }
-  return <div class={styles.markdownBody} innerHTML={html()} />
+  return <div class={mdStyles.markdownBody} innerHTML={html()} />
 }
