@@ -338,6 +338,7 @@ function handleAgentEvent(event: AgentEvent) {
 			const getResultText = (r: any): string => {
 				if (typeof r === "string") return r;
 				if (Array.isArray(r)) return r.map((c: any) => c?.text ?? "").join("");
+				if (r?.content && Array.isArray(r.content)) return r.content.map((c: any) => c?.text ?? "").join("");
 				return JSON.stringify(r);
 			};
 
