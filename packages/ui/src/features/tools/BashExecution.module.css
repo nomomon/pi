@@ -6,7 +6,7 @@
 .bashCommand {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: calc(var(--space-3) / 2);
     padding: var(--space-1) 0;
 }
 
@@ -36,9 +36,9 @@
     background: var(--bg);
     border: var(--border-base) solid var(--border);
     border-radius: var(--radius-xs);
-    padding: 6px var(--space-2);
+    padding: calc(var(--space-3) / 2) var(--space-2);
     font-size: var(--text-sm);
-    line-height: 1.45;
+    line-height: var(--leading-snug);
     white-space: pre-wrap;
     word-break: break-all;
     max-height: 400px;
@@ -50,7 +50,7 @@
     color: var(--text-dim);
     font-size: var(--text-xs);
     font-style: italic;
-    padding: 2px 0;
+    padding: calc(var(--space-1) / 2) 0;
 }
 
 @keyframes pulse {
@@ -59,6 +59,6 @@
         opacity: var(--opacity-100);
     }
     50% {
-        opacity: 0.4;
+        opacity: var(--opacity-50);
     }
 }

@@ -20,8 +20,8 @@
 .toolHeader {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 10px;
+    gap: calc(var(--space-3) / 2);
+    padding: var(--space-1) var(--space-2);
     background: var(--bg-surface);
     border: none;
     color: var(--text);
@@ -96,7 +96,7 @@
 }
 
 .toolSectionLabel {
-    font-size: 10px;
+    font-size: var(--text-xs);
     color: var(--text-dim);
     text-transform: uppercase;
     letter-spacing: var(--tracking-wide);
@@ -113,7 +113,7 @@
     background: var(--bg-surface);
     border: var(--border-base) solid var(--border);
     border-radius: var(--radius-xs);
-    padding: 6px var(--space-2);
+    padding: calc(var(--space-3) / 2) var(--space-2);
     max-height: 400px;
     overflow-y: auto;
 }

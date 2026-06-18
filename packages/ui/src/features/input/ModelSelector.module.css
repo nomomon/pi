@@ -25,10 +25,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 14px;
+    padding: var(--space-2) var(--space-4);
     border-bottom: var(--border-base) solid var(--border);
     font-weight: var(--weight-bold);
-    font-size: 13px;
+    font-size: var(--text-sm);
 }
 
 .overlayClose {
@@ -37,7 +37,7 @@
     color: var(--text-muted);
     cursor: pointer;
     font-size: var(--text-base);
-    padding: 2px 6px;
+    padding: calc(var(--space-1) / 2) calc(var(--space-3) / 2);
     border-radius: var(--radius-xs);
 }
 
@@ -52,8 +52,8 @@
     border-bottom: var(--border-base) solid var(--border);
     color: var(--text);
     font-family: var(--font);
-    font-size: 13px;
-    padding: var(--space-2) 14px;
+    font-size: var(--text-sm);
+    padding: var(--space-2) var(--space-4);
     outline: none;
     width: 100%;
 }
@@ -83,7 +83,7 @@
     display: flex;
     align-items: baseline;
     gap: var(--space-2);
-    padding: var(--space-2) 14px;
+    padding: var(--space-2) var(--space-4);
     background: none;
     border: none;
     border-bottom: var(--border-base) solid var(--border);

@@ -75,6 +75,7 @@
     /* ── z-index ──────────────────────────────── */
     --z-base: 0;
     --z-raised: 10;
+    --z-dropdown: 50;
     --z-overlay: 100;
     --z-toast: 200;
     --z-tooltip: 300;
@@ -82,6 +83,7 @@
     /* ── duration & easing ────────────────────── */
     --duration-fast: 80ms;
     --duration-base: 150ms;
+    --duration-medium: 200ms;
     --duration-slow: 300ms;
     --duration-slower: 500ms;
 

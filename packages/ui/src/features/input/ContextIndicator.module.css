@@ -27,8 +27,8 @@
     background: var(--bg-surface);
     border: var(--border-base) solid var(--border);
     border-radius: var(--radius-md);
-    padding: 10px var(--space-3);
-    z-index: 50;
+    padding: var(--space-2) var(--space-3);
+    z-index: var(--z-dropdown);
     box-shadow: 0 var(--space-1) 16px rgba(0, 0, 0, 0.4);
     display: flex;
     flex-direction: column;
@@ -38,13 +38,13 @@
 .ctxPopupClose {
     position: absolute;
     top: var(--space-2);
-    right: 10px;
+    right: var(--space-2);
     background: none;
     border: none;
     color: var(--text-dim);
     font-size: var(--text-xs);
     cursor: pointer;
-    padding: 2px var(--space-1);
+    padding: calc(var(--space-1) / 2) var(--space-1);
     line-height: var(--leading-none);
 }
 
@@ -61,7 +61,7 @@
 
 .ctxPopupBar {
     flex: 1;
-    height: 6px;
+    height: calc(var(--space-3) / 2);
     background: var(--bg-active);
     border-radius: var(--radius-xs);
     overflow: hidden;
@@ -71,7 +71,7 @@
     height: 100%;
     border-radius: var(--radius-xs);
     transition: width var(--duration-slow) var(--ease-default);
-    min-width: 2px;
+    min-width: calc(var(--space-1) / 2);
 }
 
 .ctxPopupPct {
@@ -94,18 +94,18 @@
     flex-direction: column;
     gap: var(--space-1);
     border-top: var(--border-base) solid var(--border);
-    padding-top: 6px;
+    padding-top: calc(var(--space-3) / 2);
 }
 
 .ctxPopupRow {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: calc(var(--space-3) / 2);
 }
 
 .ctxPopupDot {
-    width: 6px;
-    height: 6px;
+    width: calc(var(--space-3) / 2);
+    height: calc(var(--space-3) / 2);
     border-radius: 50%;
     flex-shrink: 0;
 }
@@ -128,5 +128,5 @@
     font-size: var(--text-xs);
     color: var(--text-dim);
     border-top: var(--border-base) solid var(--border);
-    padding-top: 6px;
+    padding-top: calc(var(--space-3) / 2);
 }

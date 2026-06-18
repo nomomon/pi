@@ -2,7 +2,7 @@
 .slashSuggestionsWrap {
     overflow: hidden;
     border-radius: var(--radius-md) var(--radius-md) 0 0;
-    margin: -14px -14px 0;
+    margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-4)) 0;
 }
 
 .slashSuggestions {
@@ -15,8 +15,8 @@
 .slashSuggestion {
     display: flex;
     align-items: baseline;
-    gap: 10px;
-    padding: 6px 14px;
+    gap: var(--space-2);
+    padding: calc(var(--space-3) / 2) var(--space-4);
     cursor: pointer;
     border-bottom: var(--border-base) solid var(--border);
 }
@@ -48,8 +48,8 @@
 }
 
 .suggestionSource {
-    font-size: 10px;
-    padding: 1px 5px;
+    font-size: var(--text-xs);
+    padding: var(--space-px) var(--space-1);
     border-radius: var(--radius-xs);
     border: var(--border-base) solid;
 }

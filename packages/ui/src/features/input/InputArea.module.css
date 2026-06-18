@@ -20,7 +20,7 @@
     margin: 0 auto;
     width: 100%;
     overflow: visible;
-    padding: 14px;
+    padding: var(--space-4);
     gap: var(--space-3);
     transition: box-shadow var(--duration-base) var(--ease-default), border-color var(--duration-base) var(--ease-default);
     position: relative;
@@ -43,9 +43,9 @@
     border: none;
     color: var(--text);
     font-family: var(--font-sans);
-    font-size: 15px;
-    line-height: 1.55;
-    padding: 6px 0;
+    font-size: var(--text-md);
+    line-height: var(--leading-normal);
+    padding: calc(var(--space-3) / 2) 0;
     resize: none;
     outline: none;
     min-height: var(--space-12);
@@ -90,15 +90,15 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: opacity 0.1s var(--ease-default);
+    transition: opacity var(--duration-fast) var(--ease-default);
 }
 
 .inputSendBtn:hover {
-    opacity: 0.85;
+    opacity: var(--opacity-75);
 }
 
 .inputSendBtn:disabled {
-    opacity: 0.4;
+    opacity: var(--opacity-50);
     cursor: not-allowed;
 }
 

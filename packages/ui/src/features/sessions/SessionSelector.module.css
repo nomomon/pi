@@ -25,10 +25,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 14px;
+    padding: var(--space-2) var(--space-4);
     border-bottom: var(--border-base) solid var(--border);
     font-weight: var(--weight-bold);
-    font-size: 13px;
+    font-size: var(--text-sm);
 }
 
 .overlayClose {
@@ -37,7 +37,7 @@
     color: var(--text-muted);
     cursor: pointer;
     font-size: var(--text-base);
-    padding: 2px 6px;
+    padding: calc(var(--space-1) / 2) calc(var(--space-3) / 2);
     border-radius: var(--radius-xs);
 }
 
@@ -52,8 +52,8 @@
     border-bottom: var(--border-base) solid var(--border);
     color: var(--text);
     font-family: var(--font);
-    font-size: 13px;
-    padding: var(--space-2) 14px;
+    font-size: var(--text-sm);
+    padding: var(--space-2) var(--space-4);
     outline: none;
     width: 100%;
 }
@@ -64,7 +64,7 @@
 }
 
 .overlayList::-webkit-scrollbar {
-    width: 5px;
+    width: var(--space-1);
 }
 
 .overlayList::-webkit-scrollbar-thumb {
@@ -83,7 +83,7 @@
     display: flex;
     align-items: baseline;
     gap: var(--space-2);
-    padding: var(--space-2) 14px;
+    padding: var(--space-2) var(--space-4);
     background: none;
     border: none;
     border-bottom: var(--border-base) solid var(--border);
@@ -135,7 +135,7 @@
     display: block;
     font-size: var(--text-sm);
     color: var(--text-muted);
-    margin-top: 2px;
+    margin-top: calc(var(--space-1) / 2);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -145,6 +145,6 @@
     display: block;
     font-size: var(--text-xs);
     color: var(--text-muted);
-    margin-top: 2px;
-    opacity: 0.7;
+    margin-top: calc(var(--space-1) / 2);
+    opacity: var(--opacity-75);
 }

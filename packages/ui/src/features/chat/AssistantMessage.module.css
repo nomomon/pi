@@ -5,7 +5,7 @@
 .usageLine {
     font-size: var(--text-xs);
     color: var(--text-dim);
-    margin-top: 6px;
+    margin-top: calc(var(--space-3) / 2);
 }
 
 .usageModel {
@@ -22,7 +22,7 @@
 .thinkingHeader {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: calc(var(--space-3) / 2);
     padding: var(--space-1) var(--space-2);
     background: var(--bg-surface);
     border: none;
@@ -63,9 +63,9 @@
 
 .markdownBody {
     font-family: var(--font-serif);
-    font-size: 15px;
+    font-size: var(--text-md);
     word-break: break-word;
-    line-height: 1.7;
+    line-height: var(--leading-relaxed);
 }
 
 .markdownBody p {
@@ -82,7 +82,7 @@
 .markdownBody h4,
 .markdownBody h5,
 .markdownBody h6 {
-    margin: var(--space-3) 0 6px;
+    margin: var(--space-3) 0 calc(var(--space-3) / 2);
     color: var(--text);
 }
 
@@ -101,7 +101,7 @@
 .markdownBody code {
     background: var(--bg-surface);
     border: var(--border-base) solid var(--border);
-    padding: 1px var(--space-1);
+    padding: var(--border-base) var(--space-1);
     border-radius: var(--radius-xs);
     font-family: var(--font);
     font-size: 0.9em;
@@ -112,9 +112,9 @@
     background: var(--bg-surface);
     border: var(--border-base) solid var(--border);
     border-radius: var(--radius-xs);
-    padding: 10px var(--space-3);
+    padding: var(--space-2) var(--space-3);
     overflow-x: auto;
-    margin: 6px 0;
+    margin: calc(var(--space-3) / 2) 0;
 }
 
 .markdownBody pre code {
@@ -132,14 +132,14 @@
 }
 
 .markdownBody li {
-    margin: 2px 0;
+    margin: calc(var(--space-1) / 2) 0;
 }
 
 .markdownBody blockquote {
     border-left: var(--border-md) solid var(--border);
     padding-left: var(--space-3);
     color: var(--text-muted);
-    margin: 6px 0;
+    margin: calc(var(--space-3) / 2) 0;
 }
 
 .markdownBody a {
@@ -154,7 +154,7 @@
 .markdownBody hr {
     border: none;
     border-top: var(--border-base) solid var(--border);
-    margin: 10px 0;
+    margin: var(--space-2) 0;
 }
 
 .markdownBody table {

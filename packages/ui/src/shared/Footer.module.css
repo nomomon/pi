@@ -40,7 +40,7 @@
     color: var(--text);
     font-family: var(--font);
     font-size: var(--text-xs);
-    padding: 2px 6px;
+    padding: calc(var(--space-1) / 2) calc(var(--space-3) / 2);
     outline: none;
     margin-left: auto;
 }
