@@ -328,7 +328,7 @@
     border: var(--border-base) solid var(--border);
     border-radius: var(--radius-xs);
     padding: calc(var(--space-3) / 2) var(--space-2);
-    max-height: 300px;
+    max-height: var(--max-h-code);
     overflow-y: auto;
     margin: 0;
 }

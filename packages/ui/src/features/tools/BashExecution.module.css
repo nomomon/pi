@@ -41,7 +41,7 @@
     line-height: var(--leading-snug);
     white-space: pre-wrap;
     word-break: break-all;
-    max-height: 400px;
+    max-height: var(--max-h-output);
     overflow-y: auto;
     margin-top: var(--space-1);
 }

@@ -16,7 +16,7 @@
 }
 
 .chatView::-webkit-scrollbar {
-    width: 6px;
+    width: var(--size-scrollbar);
 }
 
 .chatView::-webkit-scrollbar-track {

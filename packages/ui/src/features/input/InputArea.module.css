@@ -49,7 +49,7 @@
     resize: none;
     outline: none;
     min-height: var(--space-12);
-    max-height: 384px;
+    max-height: var(--max-h-input);
     overflow-y: auto;
     white-space: pre-wrap;
 }
@@ -84,7 +84,7 @@
     background: var(--accent);
     border: none;
     border-radius: var(--radius-sm);
-    color: #fff;
+    color: var(--color-white);
     cursor: pointer;
     display: flex;
     align-items: center;

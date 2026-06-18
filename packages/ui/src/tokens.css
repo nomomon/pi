@@ -127,4 +127,24 @@
     --max-w-prose:   65ch;    /* readable text column */
     --max-w-content: 720px;   /* answer / chat column */
     --max-w-layout:  1280px;  /* full page container */
+
+    /* ── max-heights ──────────────────────────── */
+    --max-h-input:  384px;   /* textarea scroll cap */
+    --max-h-output: 400px;   /* bash/tool output boxes */
+    --max-h-code:   300px;   /* code block in detail view */
+
+    /* ── shadows ──────────────────────────────── */
+    --shadow-card:  0 1px 4px rgba(0, 0, 0, 0.12);
+    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.16);
+    --shadow-focus: 0 0 0 2px var(--accent);
+
+    /* ── scrollbar ────────────────────────────── */
+    --size-scrollbar: 5px;
+
+    /* ── semantic colors ──────────────────────── */
+    --color-overlay:       rgba(0, 0, 0, 0.7);
+    --color-white:         #ffffff;
+    --color-danger:        #e05252;
+    --color-danger-subtle: rgba(224, 82, 82, 0.1);
+    --bg-secondary:        var(--bg-surface);
 }
