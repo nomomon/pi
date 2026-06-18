@@ -51,6 +51,14 @@ export default function InputArea() {
     if (showModelMenu()) setTimeout(() => searchInputRef?.focus(), 0)
   })
 
+  createEffect(() => {
+    if (state.connected && state.availableModels.length === 0) {
+      sendCommand({ type: 'get_available_models' })
+        .then((data: any) => setState('availableModels', data?.models ?? []))
+        .catch(() => {})
+    }
+  })
+
   function autoResize() {
     if (!textareaRef) return
     textareaRef.style.height = 'auto'
@@ -100,6 +108,21 @@ export default function InputArea() {
   const isReasoningActive = createMemo(() =>
     modelSupportsReasoning() && state.thinkingLevel !== 'none'
   )
+
+  const contextFill = createMemo(() => {
+    const used = state.totalTokens
+    const max = currentModelConfig()?.contextWindow
+    if (!max || used <= 0) return null
+    return Math.min(used / max, 1)
+  })
+
+  const contextArcColor = createMemo(() => {
+    const p = contextFill()
+    if (p === null) return 'var(--text-dim)'
+    if (p >= 0.9) return 'var(--red)'
+    if (p >= 0.7) return 'var(--yellow)'
+    return 'var(--text-dim)'
+  })
 
   function applySuggestion(cmd: RpcSlashCommand) {
     const needsArgs = ['compact', 'name', 'thinking'].includes(cmd.name)
@@ -417,6 +440,26 @@ export default function InputArea() {
           </Show>
 
           <div class="input-toolbar-spacer" />
+
+          <Show when={contextFill() !== null}>
+            <div
+              class="ctx-indicator"
+              title={`Context: ${Math.round(contextFill()! * 100)}% (${state.totalTokens.toLocaleString()} tokens)`}
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="var(--border)" stroke-width="2" />
+                <circle
+                  cx="9" cy="9" r="7"
+                  stroke={contextArcColor()}
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-dasharray="43.98"
+                  stroke-dashoffset={43.98 * (1 - contextFill()!)}
+                  transform="rotate(-90 9 9)"
+                />
+              </svg>
+            </div>
+          </Show>
 
           <button
             class={`input-model-pill ${showModelMenu() ? 'open' : ''}`}

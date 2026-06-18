@@ -1222,6 +1222,20 @@ body {
     white-space: nowrap;
 }
 
+.ctx-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    opacity: 0.6;
+    transition: opacity 0.15s;
+    cursor: default;
+}
+
+.ctx-indicator:hover {
+    opacity: 1;
+}
+
 /* Send button */
 .input-send-btn {
     width: 32px;
