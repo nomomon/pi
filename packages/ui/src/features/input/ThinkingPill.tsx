@@ -1,6 +1,6 @@
 import { For, Show } from 'solid-js'
 import type { Accessor, Setter } from 'solid-js'
-import { state } from '@/store'
+import { state } from '@/core/store'
 import styles from './ThinkingPill.module.css'
 
 interface ThinkingLevel {

@@ -1,6 +1,6 @@
 import { Show, createSignal } from 'solid-js'
-import { state, showNotification } from '@/store'
-import { sendCommand } from '@/ws'
+import { state, showNotification } from '@/core/store'
+import { sendCommand } from '@/core/ws'
 import styles from './Footer.module.css'
 
 export default function Footer() {

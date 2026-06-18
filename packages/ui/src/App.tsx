@@ -1,6 +1,6 @@
 import { onMount, Show } from 'solid-js'
-import { state, setState } from '@/store'
-import { connect } from '@/ws'
+import { state, setState } from '@/core/store'
+import { connect } from '@/core/ws'
 import ChatView from '@/features/chat/ChatView'
 import InputArea from '@/features/input/InputArea'
 import Footer from '@/shared/Footer'

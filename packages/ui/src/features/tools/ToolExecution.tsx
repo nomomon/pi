@@ -1,6 +1,6 @@
 import { Show } from 'solid-js'
 import { CheckCircle2, XCircle, Loader2, ChevronRight, ChevronDown, Terminal, FilePlus, FileText, FilePen, Search, FolderOpen, Wrench } from 'lucide-solid'
-import type { ChatEntry } from '@/types'
+import type { ChatEntry } from '@/core/types'
 import styles from './ToolExecution.module.css'
 
 interface Props {

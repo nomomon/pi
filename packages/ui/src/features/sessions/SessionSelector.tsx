@@ -1,6 +1,6 @@
 import { createSignal, onMount, For, Show } from 'solid-js'
-import { state, showNotification } from '@/store'
-import { sendCommand, reloadSession } from '@/ws'
+import { state, showNotification } from '@/core/store'
+import { sendCommand, reloadSession } from '@/core/ws'
 import styles from './SessionSelector.module.css'
 
 interface Props {

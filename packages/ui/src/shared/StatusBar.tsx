@@ -1,5 +1,5 @@
 import { Show } from 'solid-js'
-import { state } from '@/store'
+import { state } from '@/core/store'
 import styles from './StatusBar.module.css'
 
 export default function StatusBar() {

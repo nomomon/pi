@@ -1,6 +1,6 @@
 import { createSignal, onMount, For, Show } from 'solid-js'
-import { state, setState, showNotification } from '@/store'
-import { sendCommand } from '@/ws'
+import { state, setState, showNotification } from '@/core/store'
+import { sendCommand } from '@/core/ws'
 import styles from './ModelSelector.module.css'
 
 interface Props {
