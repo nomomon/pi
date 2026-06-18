@@ -92,6 +92,20 @@ function scheduleReconnect() {
 	}, 2000);
 }
 
+// On mobile, browsers suspend JS and kill WebSockets when the screen locks or
+// the app is backgrounded. Reconnect immediately when the user returns.
+document.addEventListener("visibilitychange", () => {
+	if (document.visibilityState === "visible") {
+		if (!ws || ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
+			if (reconnectTimer) {
+				clearTimeout(reconnectTimer);
+				reconnectTimer = null;
+			}
+			connect();
+		}
+	}
+});
+
 export function send(command: RpcCommand) {
 	if (!ws || ws.readyState !== WebSocket.OPEN) {
 		console.warn("WS not connected, dropping command", command);
