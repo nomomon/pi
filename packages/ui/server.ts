@@ -49,8 +49,15 @@ const MIME_TYPES: Record<string, string> = {
   '.woff2': 'font/woff2',
 }
 
+// PWA assets must be publicly accessible — browsers fetch them without credentials
+const PUBLIC_PATHS = new Set(['/manifest.webmanifest', '/pwa-icon.svg', '/favicon.ico'])
+function isPublicPath(url: string): boolean {
+  const path = url.split('?')[0]
+  return PUBLIC_PATHS.has(path) || path.startsWith('/pwa-') || path.startsWith('/apple-touch-icon') || path.startsWith('/maskable-icon')
+}
+
 const server = createServer((req, res) => {
-  if (!isAuthorized(req)) {
+  if (!isPublicPath(req.url ?? '') && !isAuthorized(req)) {
     res.writeHead(401, { 'WWW-Authenticate': 'Basic realm="pi"' })
     res.end()
     return
