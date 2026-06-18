@@ -220,6 +220,23 @@
     outline: none;
 }
 
+.sidebarShowMore {
+    display: block;
+    width: 100%;
+    padding: var(--space-1) var(--space-2) var(--space-1) var(--space-4);
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    cursor: pointer;
+    text-align: left;
+}
+
+.sidebarShowMore:hover {
+    color: var(--text);
+}
+
 .sidebarEmpty {
     padding: var(--space-4) var(--space-3);
     font-size: var(--text-sm);

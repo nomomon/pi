@@ -1,5 +1,5 @@
 import { createSignal, createEffect, For, Show, onMount, onCleanup } from 'solid-js'
-import { ChevronDown, ChevronRight, MoreHorizontal, SquarePen } from 'lucide-solid'
+import { Folder, FolderOpen, MoreHorizontal, SquarePen } from 'lucide-solid'
 import { state, showNotification } from '@/core/store'
 import { sendCommand, reloadSession, openInWorkspace } from '@/core/ws'
 import styles from './SessionSidebar.module.css'
@@ -18,6 +18,7 @@ interface WorkspaceGroup {
   cwd: string
   sessions: SessionItem[]
   collapsed: boolean
+  visibleCount: number
 }
 
 interface MenuState {
@@ -53,7 +54,7 @@ export default function SessionSidebar() {
       setGroups((prev) =>
         Array.from(map.entries()).map(([cwd, sessions]) => {
           const existing = prev.find((g) => g.cwd === cwd)
-          return { cwd, sessions, collapsed: existing?.collapsed ?? false }
+          return { cwd, sessions, collapsed: existing?.collapsed ?? false, visibleCount: existing?.visibleCount ?? 3 }
         })
       )
     } catch {
@@ -81,6 +82,10 @@ export default function SessionSidebar() {
 
   function toggleGroup(cwd: string) {
     setGroups((gs) => gs.map((g) => g.cwd === cwd ? { ...g, collapsed: !g.collapsed } : g))
+  }
+
+  function showMoreSessions(cwd: string) {
+    setGroups((gs) => gs.map((g) => g.cwd === cwd ? { ...g, visibleCount: g.sessions.length } : g))
   }
 
   async function openSession(s: SessionItem) {
@@ -149,13 +154,13 @@ export default function SessionSidebar() {
           {(group) => (
             <div class={styles.sidebarGroup}>
               <button class={styles.sidebarGroupHeader} onClick={() => toggleGroup(group.cwd)}>
-                <span class={styles.sidebarGroupArrow}>{group.collapsed ? <ChevronRight size={12} /> : <ChevronDown size={12} />}</span>
+                <span class={styles.sidebarGroupArrow}>{group.collapsed ? <Folder size={13} /> : <FolderOpen size={13} />}</span>
                 <span class={styles.sidebarGroupName} title={group.cwd}>{shortPath(group.cwd)}</span>
                 <span class={styles.sidebarGroupCount}>{group.sessions.length}</span>
               </button>
               <Show when={!group.collapsed}>
                 <div class={styles.sidebarGroupSessions}>
-                  <For each={group.sessions}>
+                  <For each={group.sessions.slice(0, group.visibleCount)}>
                     {(s) => (
                       <div
                         class={`${styles.sidebarSession}${state.sessionFile === s.path ? ' ' + styles.active : ''}`}
@@ -194,6 +199,11 @@ export default function SessionSidebar() {
                       </div>
                     )}
                   </For>
+                  <Show when={group.sessions.length > group.visibleCount}>
+                    <button class={styles.sidebarShowMore} onClick={(e) => { e.stopPropagation(); showMoreSessions(group.cwd) }}>
+                      {group.sessions.length - group.visibleCount} more
+                    </button>
+                  </Show>
                 </div>
               </Show>
             </div>
