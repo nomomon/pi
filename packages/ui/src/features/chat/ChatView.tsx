@@ -1,4 +1,5 @@
-import { For, Show, createEffect, createMemo, createSignal, Switch, Match } from 'solid-js'
+import { For, Show, createEffect, createSignal, Switch, Match } from 'solid-js'
+import { createStore, reconcile } from 'solid-js/store'
 import { state } from '@/store'
 import type { ChatEntry } from '@/types'
 import AssistantMessage from './AssistantMessage'
@@ -6,15 +7,15 @@ import StepGroup from '@/features/tools/ToolCallGroup'
 import styles from './ChatView.module.css'
 
 type GroupedEntry =
-  | { kind: 'message'; entry: ChatEntry; hideThinking: boolean }
-  | { kind: 'step'; entries: ChatEntry[]; key: string }
+  | { id: string; kind: 'message'; entry: ChatEntry; hideThinking: boolean }
+  | { id: string; kind: 'step'; entries: ChatEntry[] }
 
 export default function ChatView() {
   let containerRef: HTMLDivElement | undefined
   const [expanded, setExpanded] = createSignal<Record<string, boolean>>({})
 
-  function toggle(key: string) {
-    setExpanded(prev => ({ ...prev, [key]: !prev[key] }))
+  function toggle(id: string) {
+    setExpanded(prev => ({ ...prev, [id]: !prev[id] }))
   }
 
   createEffect(() => {
@@ -23,13 +24,17 @@ export default function ChatView() {
     if (containerRef) containerRef.scrollTop = containerRef.scrollHeight
   })
 
-  const grouped = createMemo((): GroupedEntry[] => {
+  // Store + reconcile keeps item references stable across recomputes so For
+  // doesn't destroy/recreate components on every incoming message.
+  const [grouped, setGrouped] = createStore<GroupedEntry[]>([])
+
+  createEffect(() => {
     const result: GroupedEntry[] = []
     let step: ChatEntry[] = []
 
     const flushStep = () => {
       if (step.length > 0) {
-        result.push({ kind: 'step', entries: step, key: `step:${step[0].id}` })
+        result.push({ id: `step:${step[0].id}`, kind: 'step', entries: [...step] })
         step = []
       }
     }
@@ -37,7 +42,7 @@ export default function ChatView() {
     for (const entry of state.messages) {
       if (entry.type === 'user') {
         flushStep()
-        result.push({ kind: 'message', entry, hideThinking: false })
+        result.push({ id: `msg:${entry.id}`, kind: 'message', entry, hideThinking: false })
       } else if (entry.type === 'assistant') {
         const hasThinking = (entry.thinkingBlocks?.length ?? 0) > 0
         const hasText = (entry.textBlocks?.length ?? 0) > 0
@@ -46,7 +51,7 @@ export default function ChatView() {
 
         if (hasText) {
           flushStep()
-          result.push({ kind: 'message', entry, hideThinking: hasThinking })
+          result.push({ id: `msg:${entry.id}`, kind: 'message', entry, hideThinking: hasThinking })
         }
       } else {
         // tool_execution, bash, compaction, system
@@ -55,34 +60,30 @@ export default function ChatView() {
     }
 
     flushStep()
-    return result
+    setGrouped(reconcile(result, { key: 'id', merge: true }))
   })
 
   return (
     <div class={styles.chatView} ref={containerRef}>
       <div class={styles.chatColumn}>
-        <For each={grouped()}>
+        <For each={grouped}>
           {(item) => (
-            <Show
-              when={item.kind === 'step'}
-              fallback={() => {
-                const m = item as { kind: 'message'; entry: ChatEntry; hideThinking: boolean }
-                return <MessageRenderer entry={m.entry} hideThinking={m.hideThinking} />
-              }}
-            >
-              {() => {
-                const g = item as { kind: 'step'; entries: ChatEntry[]; key: string }
-                return (
+            <Switch>
+              <Match when={item.kind === 'step' && (item as Extract<GroupedEntry, { kind: 'step' }>)}>
+                {(g) => (
                   <StepGroup
-                    entries={g.entries}
-                    expanded={expanded()[g.key] ?? false}
-                    onToggle={() => toggle(g.key)}
+                    entries={g().entries}
+                    expanded={expanded()[g().id] ?? false}
+                    onToggle={() => toggle(g().id)}
                     itemExpanded={expanded()}
                     onToggleItem={toggle}
                   />
-                )
-              }}
-            </Show>
+                )}
+              </Match>
+              <Match when={item.kind === 'message' && (item as Extract<GroupedEntry, { kind: 'message' }>)}>
+                {(m) => <MessageRenderer entry={m().entry} hideThinking={m().hideThinking} />}
+              </Match>
+            </Switch>
           )}
         </For>
         <Show when={state.messages.length === 0 && state.connected}>
